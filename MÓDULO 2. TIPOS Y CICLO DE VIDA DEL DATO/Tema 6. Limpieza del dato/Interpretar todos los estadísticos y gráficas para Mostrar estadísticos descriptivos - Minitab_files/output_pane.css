@@ -1,0 +1,1352 @@
+﻿/* Applying the command-title style to the div created for the Command Title in MSS output*/
+.command-title {
+	font-family: 'Segoe UI', 'Open Sans', sans-serif;
+	font-size: 19px;
+	font-weight: 600;
+/*	font-weight: bold;*/
+	padding: 2px;
+	display: block; 
+	text-overflow: ellipsis; 
+	overflow: hidden; 
+	white-space: nowrap;
+	vertical-align: middle; 
+	border: none;
+	
+}
+
+.htmlswo {
+    height: 100%;
+    display: flex;
+    background: #e6e6e6;
+}
+
+.htmlswo div {
+    cursor: default;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    font-family: 'Segoe UI', 'Open Sans', sans-serif;
+    font-size: 16px;
+    margin: 0px 6px;
+    flex: 1;
+    display: flex;
+    fill: currentColor;
+    background: #e6e6e6;
+    -webkit-font-smoothing: antialiased;
+    width: calc(100% - 12px);
+}
+
+.htmlswo svg {
+    fill: currentColor;
+}
+
+.htmlswo .groupsizing {
+    cursor: col-resize !important;
+}
+
+.htmlswo .horizontalsizing {
+    cursor: e-resize !important;
+}
+
+.htmlswo .verticalsizing {
+    cursor: s-resize !important;
+}
+
+.htmlswo .horizontalsizing.verticalsizing {
+    cursor: se-resize !important;
+}
+
+.htmlswo h1, .htmlswo h2, .htmlswo h3, .htmlswo h4, .htmlswo h5, .htmlswo h6 {
+    margin: 0px;
+    padding: 0px;
+    font-weight: normal;
+}
+
+.htmlswo :focus {
+    outline: none;
+}
+
+.htmlswo .splitter {
+    display: none;
+    width: 6px;
+    cursor: col-resize;
+    height: 100%;
+    background: #e6e6e6;
+}
+
+.htmlswo .tabgroup ~ .tabgroup .splitter {
+    display: block;
+}
+
+.htmlswo .tabgroupcontent {
+    margin-top: 6px;
+    flex: 1;
+    flex-direction: column;
+    display: flex;
+    min-width: 0px;
+}
+
+.htmlswo .tabgroup {
+    display: flex;
+}
+
+.htmlswo .tabgroup .tab .downarrow, .htmlswo .tabgroup .tab .close {
+        display: none;
+    }
+
+.htmlswo .tabgroup .selectedcontent {
+        background: #fff;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+
+.htmlswo .tabgroup .selectedcontent .dropzone {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            z-index: -99;
+            background-position: center center;
+            background-repeat: no-repeat;
+            opacity: .2;
+        }
+
+.htmlswo .dragging .tabgroup .selectedcontent .dropzone {
+    z-index: 3;
+    width: 40%;
+}
+
+.htmlswo .dragging .tabgroup .selectedcontent .dropzone.left {
+        left: 0;
+        background-image: url(add_group_left.png);
+    }
+
+.htmlswo .dragging .tabgroup .selectedcontent .dropzone.center {
+        z-index: 2;
+        width: 100%;
+        background-image: url(add_to_group.png);
+    }
+
+    .dragging .tabgroup .selectedcontent .dropzone.right {
+        right: 0;
+        background-image: url(add_group_right.png);
+    }
+
+    .dragging .tabgroup .selectedcontent .dropzone.dragover {
+        outline: 2px solid rgba(33,150,243,1);
+        background-color: rgba(33,150,243,.2);
+        opacity: 1;
+    }
+
+.htmlswo .tabbox {
+    width: calc(100% - 32px);
+}
+
+.htmlswo .tabcontainer {
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 0px;
+}
+
+.htmlswo .tabcontainer.dragover, .htmlswo .tab.dragover, .htmlswo .tab.current.dragover {
+        background-color: rgba(33,150,243,.2);
+    }
+
+.htmlswo .tab {
+    display: inline-grid;
+    align-items: center;
+    height: 24px;
+    background: #e6e6e6;
+    color: #636363;
+    font-size: 12px;
+    padding: 0 38px 0 10px;
+    cursor: pointer;
+    font-weight: 600;
+    position: relative;
+    -webkit-user-select: none;
+    user-select: none;
+    max-width: 160px;
+    border-top: 2px solid transparent;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+.htmlswo .tab:hover {
+        color: #333;
+    }
+
+.htmlswo .tab .label {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        padding-right: 1px;
+    }
+
+.htmlswo .tab .close {
+        color: #111;
+    }
+
+.htmlswo .tab .close svg {
+            /* this svg does not align center with span, this bumps it up a little to fit*/
+            padding-bottom: 2px;
+        }
+
+.htmlswo .tabgroup.current .tab.current {
+    color: #333;
+    border-color: #056eb2;
+}
+
+.htmlswo .tab.current {
+    background-color: #fff;
+    color: #636363;
+    border-color: #ccc;
+    margin-left: 10px;
+}
+
+.htmlswo .tab.current .downarrow, .htmlswo .tab:hover .downarrow {
+        display: inline-block;
+        position: absolute;
+        right: 18px;
+        top: 4px;
+        padding: 1px;
+        border-radius: 50%;
+        height: 13px;
+        width: 13px;
+        transition: opacity .2s ease-in-out;
+    }
+
+.htmlswo .tab.current .close, .htmlswo .tab:hover .close {
+        display: inline-block;
+        position: absolute;
+        right: 2px;
+        top: 4px;
+        height: 11px;
+        width: 11px;
+        border-radius: 50%;
+        padding: 2px;
+        transition: opacity .2s ease-in-out;
+    }
+
+.htmlswo .tab .close:hover, .htmlswo .tab .downarrow:hover {
+    background-color: #c6c6c6;
+    color: #fff;
+}
+
+.htmlswo .tabrow {
+    position: relative;
+    overflow: hidden;
+}
+
+.htmlswo .alltabs {
+    position: absolute;
+    top: 0px;
+    right: 13px;
+    height: 20px;
+    width: 20px;
+    padding: 1px;
+    cursor: pointer;
+}
+
+.htmlswo .alltabs:hover {
+        background-color: #c6c6c6;
+    }
+
+.htmlswo .alltabs:focus {
+        background-color: #b2b2b2;
+    }
+
+.htmlswo .commandcontainer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.htmlswo .busy {
+    cursor: wait;
+}
+
+.htmlswo .header .separator {
+    border-bottom: 1px solid #ddd;
+    margin-top: 8px;
+}
+
+.htmlswo .header {
+    margin: 10px 16px 0px 16px;
+    position: relative;
+}
+
+.htmlswo .header .selected:focus {
+        outline: 1px dashed rgba(33,150,243,1);
+    }
+
+.htmlswo .header .worksheet {
+        font-size: 11px;
+        text-transform: uppercase;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+.htmlswo .header .worksheet svg {
+            height: 12px;
+            width: 12px;
+            margin-right: 3px;
+            margin-bottom: 2px;
+            vertical-align: middle;
+        }
+
+.htmlswo .header .worksheet span {
+            padding-bottom: 2px;
+        }
+
+.htmlswo .header .title {
+        display: block;
+        margin-right: 32px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        padding-right: 5px;
+        font-size: 19px;
+        font-family: 'Segoe UI', 'Open Sans', sans-serif;
+        font-weight: 600;
+        vertical-align: middle;
+        margin-bottom: 8px;
+    }
+
+.htmlswo .header .downarrow {
+        position: absolute;
+        color: black;
+        top: 3px;
+        right: -4px;
+        margin-top: 4px;
+        padding: 2px;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+.htmlswo .header .downarrow:hover {
+            background-color: #c6c6c6;
+        }
+
+.htmlswo .header .downarrow:focus {
+            background-color: #ffffff;
+            outline: 1px dotted #727272;
+            padding: 0px;
+        }
+
+.htmlswo .outofdate, .htmlswo .autoupdate {
+    font-size: 13px;
+    margin-bottom: 3px;
+}
+
+.htmlswo .outofdate .icon, .htmlswo .autoupdate .icon {
+        color: #056eb2;
+    }
+
+.htmlswo .outofdate > *, .htmlswo .autoupdate > * {
+        vertical-align: middle;
+    }
+
+.htmlswo .command-section {
+    padding-left: 16px;
+    position: absolute;
+    top: 5px;
+    left: 0px;
+    right: 16px;
+    bottom: 5px;
+    overflow: auto;
+}
+
+
+.contents {
+    overflow: hidden;
+    flex-grow: 1;
+    position: relative;
+}
+
+.output .downarrow {
+    display: none;
+    color: black;
+    position: absolute;
+    right: -36px;
+    top: 0px;
+    padding: 5px 5px 0px 5px;
+    background-color: #eee;
+    cursor: pointer;
+    z-index: 100;
+}
+
+    .output .downarrow:focus {
+        background-color: #c6c6c6;
+    }
+
+.output.selected > .downarrow {
+    display: block;
+}
+
+.output.selected.loading > .downarrow {
+    display: none;
+}
+
+.note {
+    padding: 3px 10px;
+    margin-top: 8px;
+    width: 675px;
+}
+
+    .note > div {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .note > textarea,
+    .note > div {
+        font-family: 'Segoe UI', 'Open Sans', sans-serif;
+        font-size: 13px;
+        min-height: 34px;
+        overflow: hidden;
+        width: 625px;
+        resize: none;
+        border: none;
+        margin-right: 20px;
+    }
+
+.emptyline {
+    border: none;
+}
+
+.output {
+    display: table;
+    position: relative;
+    margin: 0px 48px 0px 2px;
+    padding: 12px;
+}
+
+tr:not(.tdata) th {
+    font-family: 'Segoe UI', 'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    vertical-align: bottom;
+}
+
+tr.finalheader th, th.finalheader {
+    border-bottom: 1px solid #383838;
+}
+
+th, td {
+    vertical-align: top;
+    font-weight: normal;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+a {
+    -webkit-user-drag: none;
+    cursor: pointer;
+}
+
+.footnote {
+    font-style: italic;
+    font-size: 11px;
+    margin-left: 12px;
+    margin-top: 12px;
+}
+
+.nonitalic {
+    font-style: normal;
+}
+
+.outmessage {
+    font-family: 'Segoe UI', 'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    margin-top: 8px;
+    padding: 3px 11px;
+    white-space: nowrap;
+}
+
+.leftpadding {
+    padding-left: 20px;
+}
+
+.lft {
+    padding: 1px 11px 1px 3px;
+    text-align: left;
+}
+
+.rt {
+    padding: 1px 3px 1px 11px;
+    text-align: right;
+}
+
+.cen {
+    padding: 1px 7px 1px 7px;
+    text-align: center;
+}
+
+tr {
+    color: black;
+}
+
+.tdata {
+    font-size: 12px;
+}
+
+.link {
+    font-family: 'Segoe UI', 'Open Sans', sans-serif;
+    font-size: 13px;
+    color: #0e8bc5;
+    text-decoration: underline;
+    cursor: pointer;
+    margin: 4px;
+    padding: 0px;
+}
+
+    .link:hover, .link:focus {
+        color: #004260;
+    }
+
+    .link:active {
+        color: #3d8ec5;
+    }
+
+.output.link.primary {
+    -webkit-border-radius: 4;
+    border-radius: 4px;
+    font-family: 'Segoe UI', 'Open Sans', sans-serif;
+    font-weight: 600;
+    color: #3e8fc2;
+    font-size: 13px;
+    background: #ffffff;
+    padding: 4px 18px 4px 18px;
+    border: solid #3e8fc2 2px;
+    text-decoration: none;
+    margin-top: 12px;
+}
+
+    .output.link.primary:hover, .output.link.primary:focus {
+        color: #ffffff;
+        background: #3e8fc2;
+    }
+
+    .output.link.primary:active {
+        color: #ffffff;
+        background: #1d6a9a;
+        border: solid #1d6a9a 2px;
+    }
+
+.link ~ .link {
+    margin-top: 4px;
+}
+
+.link.primary + .link {
+    margin-top: 20px;
+}
+
+.output.link.control:last-of-type {
+    margin-bottom: 38px;
+}
+
+.command-section .output.last {
+    margin-bottom: 16px;
+}
+
+.header a, .header a:visited {
+    color: #056eb2;
+}
+
+.legacy {
+    font-family: 'Segoe UI', 'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    white-space: pre;
+    font-family: monospace;
+    -webkit-user-select: text;
+    user-select: text;
+    margin: 0px;
+    padding-top: 0px;
+}
+
+    .legacy ::selection {
+        color: white;
+        background: rgba(33,150,243,1);
+    }
+
+.output.graph {
+    font-family: 'Segoe UI', 'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: #056eb2;
+    padding: 0px;
+    margin: 16px 48px 0px 2px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.graph img.loading {
+    background-repeat: no-repeat;
+    background-position: 25% 25%;
+    background-image: url(spinner.gif);
+    cursor: wait;
+}
+
+.graph {
+    max-width: 2880px;
+}
+
+    .graph img {
+        -webkit-user-drag: none;
+        display: block;
+        max-width: 100%;
+        max-height: 2880px;
+        min-width: 96px;
+        min-height: 96px;
+    }
+
+.paragraph {
+    font-size: 13px;
+    max-width: 50rem;
+    width: auto;
+}
+
+    .paragraph + .paragraph {
+        margin-top: 0px;
+    }
+
+    .paragraph > div {
+        padding: 0px;
+        margin: 0px;
+    }
+
+.subtitle {
+    font-size: 13px;
+    margin-left: -16px;
+    margin-top: 8px;
+    padding: 3px 16px;
+}
+
+.commandsectionheader, .tabletitle {
+    font-family: 'Segoe UI', 'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    margin: 0 0 8px 0;
+    color: #056eb2;
+}
+
+.stattable {
+    font-size: 13px;
+    border-collapse: collapse;
+}
+
+.error {
+    color: #d54133;
+}
+
+.selectable {
+    border: 2px solid transparent;
+}
+
+colgroup.selectable, .command-section.selectable, .legacy.selectable, .link.selectable {
+    border: none;
+}
+
+.hover {
+    border-color: rgba(33,150,243,.2);
+}
+
+.tabgroup.current .selected {
+    border-color: rgba(33,150,243,1);
+}
+
+.selected, .inactive .tabgroup.current .selected {
+    border-color: rgba(198,198,198,1);
+}
+
+colgroup.hover {
+    background-color: #e7f4fe;
+}
+
+.tabgroup.current colgroup.selected {
+    background-color: #ceeaff;
+}
+
+colgroup.selected, .inactive .tabgroup.current colgroup.selected {
+    background-color: rgba(198,198,198,.5);
+}
+
+.selection-enabled {
+    -webkit-user-select: auto;
+    user-select: all;
+}
+
+.selection-enabled ::selection {
+    color: inherit;
+    background: inherit;
+}
+
+.tabgroup.current .selecting {
+    border-color: transparent;
+}
+
+.selection-enabled .selecting.graph {
+    display: block !important;
+}
+
+.offscreen {
+    background-color: #fff;
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+    height: 100%;
+    display: none;
+}
+
+@media print {
+    .tabgroup:not(.current), .tabrow, .tabgroup .splitter {
+        display: none !important;
+    }
+
+    .control {
+        display: none !important;
+    }
+
+    .tabgroup {
+        width: auto !important;
+        display: block !important;
+    }
+
+    ::selection {
+        color: inherit;
+        background: inherit;
+    }
+
+    .note textarea, .downarrow, .outofdate, .autoupdate {
+        display: none !important;
+    }
+
+    .output.graph{
+        display: block;
+    }
+
+    .command-section, .contents {
+        overflow: visible !important;
+        position: static !important;
+        display: block !important;
+    }
+
+    .hover, .selected {
+        border-color: transparent !important;
+    }
+
+    colgroup.hover, colgroup.selected {
+        background-color: initial !important;
+    }
+
+    .note div {
+        display: block !important;
+        padding: 2px !important;
+    }
+
+    .zoomable {
+        zoom: 1 !important;
+    }
+
+    .command-section, .header {
+        padding-left: unset !important;
+    }
+
+    :focus {
+        outline: none !important;
+    }
+
+    .optitoolbar {
+        display: none !important
+    }
+
+    .optiplot>select, .optiplot>input {
+        display: none !important
+    }
+}
+
+.copying .commandcontainer, .copying.commandcontainer {
+    display: block !important;
+    height: initial;
+}
+
+.copying ::selection {
+    color: inherit;
+    background: inherit;
+}
+
+.copying .output, .copying.output {
+    position: static !important;
+}
+
+.copying .header, .copying.header {
+    position: static !important;
+}
+
+.copying .note textarea, .copying.note textarea, .copying .downarrow, .copying .outofdate, .copying .autoupdate {
+    display: none !important;
+}
+
+.copying:not(.asimage) img:not(.placeholder) {
+    display: none;
+}
+
+.copying .command-section, .copying .contents {
+    overflow: visible !important;
+    position: static !important;
+    display: block !important;
+}
+
+.copying .hover, .copying .selected, .copying.hover, .copying.selected {
+    border-color: transparent !important;
+}
+
+.copying td, .copying th {
+    cursor: auto;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+}
+
+.copying colgroup.hover, .copying colgroup.selected {
+    background-color: initial !important;
+}
+
+.copying .note div, .copying.note div {
+    display: block !important;
+    padding: 2px !important;
+}
+
+.copying .zoomable {
+    zoom: 1 !important;
+}
+
+.copying .command-section, .copying .header, .copying.header {
+    padding-left: unset;
+}
+
+.copying.asimage .command-section, .copying.asimage .contents {
+    display: inline-block !important;
+}
+
+.copying.asimage .commandcontainer, .copying.asimage.commandcontainer {
+    display: inline-block !important;
+}
+
+.copying:focus, .copying :focus {
+    outline: none !important;
+}
+
+.copying .worksheet svg {
+    display: none;
+}
+
+.copying .control {
+  display: none !important;
+}
+
+.hidden {
+    display: none;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+.tooltip {
+    font-size: 12px;
+    color: #666666;
+    text-align: left;
+    border: 1px solid #C6C6C6;
+    background-color: #FFF;
+    position: relative;
+    z-index: 200;
+    position: fixed;
+    padding: 4px;
+    white-space: pre;
+}
+
+.monospace {
+    font-family: monospace;
+}
+
+.button {
+    -webkit-border-radius: 4;
+    border-radius: 4px;
+    font-family: 'Segoe UI', 'Open Sans', sans-serif;
+    font-weight: 600;
+    color: #3e8fc2;
+    font-size: 13px;
+    background: #ffffff;
+    padding: 4px 18px 4px 18px;
+    border: solid #3e8fc2 2px;
+    text-decoration: none;
+}
+
+.button:hover {
+    color: #ffffff;
+    background: #3e8fc2;
+
+}
+
+.button:active {
+    color: #ffffff;
+    background: #1d6a9a;
+    border: solid #1d6a9a 2px;
+
+}
+
+.graph.editing {
+    text-align: center;
+}
+
+.graph.editing span {
+    position:absolute;
+    top:50%;
+    left:0%;
+    width:100%;
+}
+
+.graph .control {
+    font-family: 'Segoe UI', 'Open Sans', sans-serif;
+    font-weight: 400;
+    color: #0f0f0f;
+    display: block;
+    position: relative;
+    padding-left: 21px;
+    margin-bottom: 7px;
+    padding-top: 0px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.control input {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+}
+
+.control_indicator {
+    position: absolute;
+    top: 0px;
+    left: 0;
+    height: 15px;
+    width: 15px;
+    background: #ffffff;
+    border: 1px solid #0f0f0f;
+}
+
+.control-radio .control_indicator {
+    border-radius: undefined%;
+}
+
+.control:hover input ~ .control_indicator,
+.control input:focus ~ .control_indicator {
+    background: #e6e6e6;
+}
+
+.control input:checked ~ .control_indicator {
+    background: #ffffff;
+}
+
+.control:hover input:not([disabled]):checked ~ .control_indicator,
+.control input:checked:focus ~ .control_indicator {
+    background: #ffffff;
+}
+
+.control input:disabled ~ .control_indicator {
+    border: 1px solid #c0c0c0;
+    background: #ececec;
+    opacity: 1;
+    pointer-events: none;
+}
+
+.control_indicator:after {
+    box-sizing: unset;
+    content: '';
+    position: absolute;
+    display: none;
+}
+
+.control input:checked ~ .control_indicator:after {
+    display: block;
+}
+
+.control-checkbox .control_indicator:after {
+    left: 5px;
+    top: 1px;
+    width: 3px;
+    height: 8px;
+    border: solid #0f0f0f;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.control-checkbox input:disabled ~ .control_indicator:after {
+    border-color: #c0c0c0;
+}
+
+/* Unlike other graphs, we do not want interactive optiplot to resize with the width of the page. */
+.output.optiplot.interactive img {
+    max-width: 2880px;
+}
+
+.optitoolbar {
+    width: 100%;
+    display: none;
+    position: absolute;
+    top: -40px;
+    margin: 0px;
+}
+
+.optitoolbar.bottom {
+    top: initial;
+    bottom: -35px;
+}
+
+.output.optiplot.interactive {
+    margin-top: 48px;
+    margin-bottom: 48px;
+}
+
+.output.optiplot.interactive.optiplot.hashorizontalscroll {
+    margin-bottom: 72px;
+}
+
+.optitoolbar .disabled {
+    cursor: not-allowed;
+    opacity: 0.25;
+}
+
+.optiresetoptimal {
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.optiresetoptimal.disabled {
+    cursor: not-allowed;
+    opacity: 0.25;
+}
+
+.optizoomlabel, .optizoomin, .optizoomout, .optizoomlevel {
+    z-index: 100;
+    color: black;
+    text-align: center;
+    vertical-align: center;
+    font-size: 12px;
+    position: relative;
+    float: right;
+    margin-top: 5px;
+    padding: 5px;
+}
+
+.optizoomin, .optizoomout, .optizoomlevel {
+    background-color: #eee;
+    height: 13px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #b2b2b2;
+}
+
+.optizoomin, .optizoomout {
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 13px;
+    cursor: pointer;
+}
+
+.optizoomin {
+    background-image: url(OptiPlot_zoom_in.png);
+    border-left-style: none;
+}
+
+.optizoomout {
+    background-image: url(OptiPlot_zoom_out.png);
+    border-right-style: none;
+}
+
+.optizoomlevel {
+    width: 32px;
+}
+
+.optizoomin:hover, .optizoomout:hover {
+    background-color: #c6c6c6;
+    color: #fff;
+}
+
+.optizoomin:active, .optizoomout:active {
+    background-color: #b2b2b2;
+}
+
+.optiscrollbar {
+    width: 100%;
+    display: none;
+    position: absolute;
+    bottom: -24px;
+    margin: 0px;
+    flex-flow: row;
+}
+
+.optiscrollbar.vertical {
+    bottom: -20px;
+    right: -24px;
+    -webkit-transform-origin: top right;
+    -webkit-transform: rotate(90deg);
+}
+
+.optiscrollslider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 18px;
+    background: #eee;
+    outline: none;
+    margin: 0px;
+    border: 1px solid;
+    border-left-width: 0px;
+    border-right-width: 0px;
+}
+
+.optiscrollslider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #e5e5e5;
+    border: 1px solid;
+    border-color: ActiveCaption;
+}
+
+.optiscrollslider::-webkit-slider-thumb:hover {
+    background: #c6c6c6;
+}
+
+.optiscrollslider::-webkit-slider-thumb:active {
+    background: #b2b2b2;
+}
+
+.optiscrollbutton {
+    font-family: "Times New Roman", 'Open Sans', sans-serif;
+    font-size: 12px;
+    color: black;
+    padding: 0px;
+    margin: 0px;
+    height: 18px;
+    width: 18px;
+    background-color: #e5e5e5;
+    cursor: pointer;
+    z-index: 100;
+    border: 1px solid;
+}
+
+.optiscrollbutton.disabled {
+    cursor: not-allowed;
+    opacity: 0.25;
+}
+
+.optiscrollbutton:hover {
+    background-color: #c6c6c6;
+}
+
+.optiscrollbutton:active {
+    background-color: #b2b2b2;
+}
+
+.optiplot.hashorizontalscroll {
+    margin-bottom: 57px;
+}
+
+.optiplot.hashorizontalscroll .optitoolbar.bottom {
+    bottom: -57px;
+}
+
+.optiplot.hasverticalscroll .downarrow {
+    right: -56px;
+}
+
+.optilevel, .opticategoricallevel {
+    font-family: 'Segoe UI', '.SFNSText', 'Open Sans', sans-serif;
+    display: none;
+    position: absolute;
+    text-align: center;
+    padding: 0px;
+    margin: 0px;
+    left: 0px;
+    top: 0px;
+    z-index: 100;
+}
+
+.optilockoverlay {
+    position: absolute;
+    padding: 0px;
+    margin: 0px;
+    z-index: 100;
+    background-color: #eee;
+    border: 1px solid #b2b2b2;
+    display: none;
+    cursor: pointer;
+}
+
+.optilockoverlay:hover {
+    background-color: #c6c6c6;
+}
+
+.optilockbutton {
+    float: left;
+    background-size: 100% 100%;
+}
+
+.optilocklabel {
+    font-family: "Segoe UI", 'Open Sans', sans-serif;
+    color: black;
+    display: inline;
+    text-align: center;
+}
+
+.optilockbutton.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.optilockbutton.unlocked {
+    background-image: url(unlock.png);
+}
+
+.optilockbutton.locked {
+    background-image: url(lock.png);
+}
+
+.optileveltooltip {
+    font-family: 'Segoe UI', '.SFNSText', 'Open Sans', sans-serif;
+    font-size: 12px;
+    display: none;
+    position: absolute;
+    z-index: 200;
+    color: #666666;
+    border: 1px solid #C6C6C6;
+    background-color: #FFF;
+    padding: 4px;
+}
+
+.optileveltooltip:empty {
+    opacity: 0.0;
+}
+
+.optilinepreview {
+    z-index: 50;
+    margin: 0px;
+    padding: 0px;
+    width: 0px;
+    border-width: 0px;
+    border-color: black;
+    border-left-width: 1px;
+    border-left-style: dashed;
+    display: none;
+    position: absolute;
+}
+
+.optislider {
+    -webkit-appearance: none;
+    display: none;
+    position: absolute;
+    z-index: 100;
+    background-color: transparent;
+    outline: none;
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+}
+
+.optislider:active, .optislider.linehover {
+    cursor: col-resize;
+}
+
+.optislider::-webkit-slider-runnable-track {
+    height: 100%;
+}
+
+.optislider::-webkit-slider-thumb, .optithumb {
+    margin: 0px;
+    padding: 0px;
+    width: 7px;
+}
+
+.optitoolbar.bottom label.optidrow {
+    position: relative;
+    float: right;
+    z-index: 100;
+}
+
+.output.selected > [class^='opti'] {
+    display: block;
+}
+
+.output.selected > .optiscrollbar {
+    display: flex;
+}
+
+.output.sizing > [class^='opti'] {
+    display: none;
+}
+
+.outputMask {
+    opacity: 0.0;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: #FFF;
+    z-index: 100;
+  }
+
+  .watermarkcontainer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .watermarkcontainer.hidden {
+    display: none;
+  }
+
+  .stagemark {
+    width: 400px;
+  }
+
+  img.logo {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .shortcuts {
+    margin-top: 33px;
+    width: 100%;
+    border-spacing: 16px 10px;
+  }
+
+  .shortcut {
+    visibility: collapse;
+  }
+
+  .shortcuts td {
+    width: 50%;
+    color: rgba(0,0,0,.50);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: default;
+  }
+
+  .command {
+    text-align: right;
+  }
+
+  .sequence {
+    text-align: left;
+  }

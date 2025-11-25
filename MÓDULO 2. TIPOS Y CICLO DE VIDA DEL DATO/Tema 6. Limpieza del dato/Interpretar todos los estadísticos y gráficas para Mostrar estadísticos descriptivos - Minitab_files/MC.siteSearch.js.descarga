@@ -1,0 +1,571 @@
+﻿
+// ensure namespace MC (minitab.com - it.minitab.com, support.minitab.com, www.minitab.com) exists
+var MC = (MC == null || typeof (MC) != "object") ? new Object() : MC;
+
+// notes:
+// this is the only one in that group that is done this way:
+// MC.siteSearchObj = function () {...
+// MC.siteSearch = new MC.siteSearchObj();
+MC.siteSearchObj = function () {
+   // private fields
+   var globalSearchResultsFullPath = '';
+   var pageSearchResultsFullPath = '';
+   var searchResultsFullPath = '';
+   // note: ^ all supported values for searchFullPath as of May 2014:
+   // - "http://it.minitab.com/search/default.aspx";
+   // - "http://it.minitab.com/academic/textbooks/search.aspx";
+   // - "http://it.minitab.com/products/quality-trainer/glossary/default.aspx";
+
+   var q0Decoded = '';
+   var qDecoded = '';
+   var firstSubSiteKeyInQ = '';
+   var qNewExtra = '';
+
+   // the parsed pieces of the already-applied filter used to determine the key when search arrives on results page
+   var keySitePiecesDict = new Object();
+   keySitePiecesDict['all'] = new Array(); // All Minitab Sites
+   keySitePiecesDict['www'] = new Array('www.minitab.com'); // Products and Services
+   keySitePiecesDict['blog'] = new Array('blog.minitab.com'); // Minitab Blog
+   keySitePiecesDict['mss'] = new Array('support.minitab.com', '/minitab/'); // Minitab Versionless Help
+   keySitePiecesDict['exp1'] = new Array('support.minitab.com', '/minitab-express/1'); // Minitab Express Help
+   keySitePiecesDict['cbm'] = new Array('support.minitab.com', '/companion'); // Companion by Minitab Help
+   keySitePiecesDict['engage'] = new Array('support.minitab.com', '/engage'); // Engage Help
+   keySitePiecesDict['connect'] = new Array('support.minitab.com', '/connect'); // Connect Help
+   keySitePiecesDict['mmops'] = new Array('support.minitab.com', '/model-ops'); // ModelOps Help
+   keySitePiecesDict['rtspc'] = new Array('support.minitab.com', '/real-time-spc'); // Real-Time SPC
+   keySitePiecesDict['workspace'] = new Array('support.minitab.com', '/workspace'); // Companion by Minitab Help
+   keySitePiecesDict['datasets'] = new Array('support.minitab.com', '/datasets'); // Data Set Library
+   keySitePiecesDict['qstone1'] = new Array('support.minitab.com', '/qeystone/1'); // Qeystone Help
+   keySitePiecesDict['solutioncenter'] = new Array('support.minitab.com', '/minitab-solution-center'); // MSC Help
+      //keySitePiecesDict['it'] = new Array('it.minitab.com');
+
+   // the "site:" filter to submit to google as part of the q (query) value, eg:
+   // anova site:support.minitab.com inurl:(/minitab/18 OR /minitab/17 OR /datasets OR /installation)
+   var keySiteFilterDict = new Object();
+   keySiteFilterDict['all'] = '';
+   keySiteFilterDict['www'] = 'site:(www.minitab.com)';
+   keySiteFilterDict['blog'] = 'site:(blog.minitab.com)';
+   keySiteFilterDict['mss'] = 'site:support.minitab.com AND inurl:(/minitab/ OR /installation)';
+   keySiteFilterDict['exp1'] = 'site:(support.minitab.com) inurl:(/minitab-express/1 OR /datasets OR /installation)';
+   keySiteFilterDict['cbm'] = 'site:(support.minitab.com) inurl:(/companion OR /installation)';
+   keySiteFilterDict['engage'] = 'site:(support.minitab.com) inurl:(/engage OR /installation)';
+   keySiteFilterDict['connect'] = 'site:(support.minitab.com) inurl:(/connect OR /installation)';
+   keySiteFilterDict['rtspc'] = 'site:(support.minitab.com) inurl:(/real-time-spc OR /installation)';
+   keySiteFilterDict['mmops'] = 'site:(support.minitab.com) inurl:(/model-ops)';
+   keySiteFilterDict['workspace'] = 'site:(support.minitab.com) inurl:(/workspace OR /installation)';
+   keySiteFilterDict['datasets'] = 'site:(support.minitab.com) inurl:(/datasets)';
+   keySiteFilterDict['qstone1'] = 'site:(support.minitab.com) inurl:(/qeystone/1)';
+   keySiteFilterDict['solutioncenter'] = 'site:(support.minitab.com) inurl:(/minitab-solution-center)';
+   //keySiteFilterDict['it'] = 'site:(it.minitab.com)';
+
+   // private functions - init (in more or less the order that they're used)
+
+   // init MC.siteSearch
+   function init() {
+      initSearchResultsFullPaths();
+
+      initQ0Decoded();
+      initQDecoded();
+      initFirstSubSiteKeyInQ();
+
+      // once init'd, point init() to a no-op
+      init = function () { };
+   }
+
+   function initSearchResultsFullPaths() {
+      // get locationHost, eg: window.location.host: 'it.minitab.com', 'localhost:1912'...
+      var locationHost = window.location.host;
+      if (locationHost.indexOf('localhost') < 0) {
+         // at this time, all valid searchFullPath values are on IT
+         locationHost = 'it.minitab.com';
+      }
+      var fullPathPrefix = 'https://' + locationHost;
+
+      // the global search results page is the same regardless of where the global search was originated
+      globalSearchResultsFullPath = fullPathPrefix + '/search/default.aspx';
+
+      // the page search results page is special when the search was initiated within the textbooks world
+      var isTextbooksSearch = (window.location.pathname.toLowerCase().indexOf('academic/textbooks') > -1);
+      if (isTextbooksSearch) {
+         pageSearchResultsFullPath = fullPathPrefix + '/academic/textbooks/search.aspx';
+      } else {
+         pageSearchResultsFullPath = fullPathPrefix + '/search/default.aspx';
+      }
+   }
+
+   // init q0Decoded from query string value
+   function initQ0Decoded() {
+      var q0 = MC.queryStringUtils.getQueryStringValue('q0');
+      if (q0 && q0.length > 0) {
+         q0Decoded = decodeURIComponent(q0);
+      }
+   }
+
+   // init qDecoded from query string value
+   function initQDecoded() {
+      var q = MC.queryStringUtils.getQueryStringValue('q');
+      if (q && q.length > 0) {
+         qDecoded = decodeURIComponent(q);
+         var hashIndex = qDecoded.indexOf('#');
+         if (hashIndex > -1) {
+            // get: 'data' from: 'data#gsc.tab=0&gsc.q=data&gsc.page=1'
+            qDecoded = qDecoded.substring(0, hashIndex);
+         }
+      }
+   }
+
+   function initFirstSubSiteKeyInQ() {
+      var q = qDecoded;
+      // ^ eg: q = 'graph site:(a.com) inurl:(/whatever)
+      var qArray = q.split(' ');
+      // ^ eg: qArray = 'graph', 'site:(a.com)', 'inurl:(/whatever)'
+      var qSiteArray = new Array();
+      for (var i = 0; i < qArray.length; i++) {
+         var qEtte = qArray[i];
+         var subSite = '';
+         if (qEtte.indexOf('site:(') == 0 && qEtte.length > 6) {
+            subSite = qEtte.substr(6);
+            qSiteArray.push(subSite);
+         } else if (qEtte.indexOf('inurl:(') == 0 && qEtte.length > 7) {
+            subSite = qEtte.substr(7);
+            qSiteArray.push(subSite);
+         }
+      }
+
+      // get as string because < IE9 doesn't support indexOf for arrays, see: http://www.w3schools.com/jsref/jsref_indexof_array.asp
+      var qSitePieces = qSiteArray.toString();
+      firstSubSiteKeyInQ = getFirstSubSiteKey(qSitePieces);
+   }
+
+   // private functions - helpers (in more or less the order that they're used)
+
+   function getFirstSubSiteKey(sitePieces) {
+      var firstSubSiteKey = '';
+      if (!sitePieces || sitePieces.length == 0) {
+         //alert("getFirstSubSiteKey(sitePieces = '" + sitePieces + "')\n\nfirstSubSiteKey: '" + firstSubSiteKey + "'");
+         return firstSubSiteKey;
+      }
+
+      for (var key in keySitePiecesDict) {
+         // eg, for: keySitePiecesDict['exp1'] = new Array('support.minitab.com', '/minitab-express/1');
+         // eg: key = 'exp1', subSites = 'support.minitab.com,/minitab-express/1'
+         var containsSubSitesCount = 0;
+         var sitePiecesArray = keySitePiecesDict[key];
+         if (sitePiecesArray.length == 0) {
+            continue;
+         }
+
+         for (var i = 0; i < sitePiecesArray.length; i++) {
+            var sitePieceItem = sitePiecesArray[i];
+            if (sitePieces.indexOf(sitePieceItem) > -1) {
+               containsSubSitesCount++;
+            }
+         }
+
+         if (containsSubSitesCount == sitePiecesArray.length) {
+            firstSubSiteKey = key;
+            break;
+         }
+      }
+
+      return firstSubSiteKey;
+   }
+
+   // get subSite from url, example: 'http://support.minitab.com/fr-fr/minitab-express/1/'
+   function getSitePiecesFromThisUrl() {
+      var sitePieces = new Array();
+      if (window.location.hostname.indexOf('localhost') < 0) {
+         // screws up search if 'localhost' is used
+         sitePieces.push(window.location.hostname);
+      }
+      sitePieces.push(window.location.pathname);
+      var sitePiecesFromThisUrl = sitePieces.toString().toLowerCase();
+
+      return sitePiecesFromThisUrl;
+   }
+
+   // private functions - search (in more or less the order used)
+
+   // search via global search input
+   function globalSearch(q) {
+      searchResultsFullPath = globalSearchResultsFullPath;
+      search(q);
+   }
+
+   // search via page search input
+   function pageSearch(q) {
+      searchResultsFullPath = pageSearchResultsFullPath;
+      search(q);
+   }
+
+   // search now
+   function search(qNew) {
+      if (!qNew || qNew.length == 0) {
+         return;
+      }
+
+      // only for debugging
+      var qNewOrig = qNew;
+
+      // q0 is just the original qNew encoded
+      var q0NewParam = '?q0=' + encodeURIComponent(qNew);
+
+      // build searchQuery
+      var searchQuery = q0NewParam;
+
+      // qExtra
+      if (qNewExtra && qNewExtra.length > 0) {
+         qNew = qNew + ' ' + qNewExtra;
+      }
+
+      // qNew is finished, encode it
+      var qNewParam = '&q=' + encodeURIComponent(qNew);
+
+      // finish searchQuery
+      searchQuery += qNewParam;
+
+      // construct searchHref
+      var searchHref = searchResultsFullPath + searchQuery;
+
+      // go
+      window.location.href = searchHref;
+   }
+
+   // public functions
+
+   // get decoded q0, which was the user-supplied value
+   this.getQ0Decoded = function () {
+      init();
+
+      return q0Decoded;
+   };
+
+   // get decoded q, which was the actual q submitted to GSE
+   this.getQDecoded = function () {
+      init();
+
+      return qDecoded;
+   };
+
+   // get the site abbrev from q from the value for "site:" (and "inurl:" if included)
+   this.getSubSiteKeyFromQ = function () {
+      init();
+
+      return firstSubSiteKeyInQ;
+   }
+
+   // extra values to include in the actual q sent to google that we don't want shown in the search input
+   // eg: 'site:(it.minitab.com) inurl:(textbooks)'
+   this.setQExtra = function (qExtraArg) {
+      init();
+
+      qNewExtra = qExtraArg;
+   }
+
+   this.setQExtraFromSubSiteKey = function (subSiteKey) {
+      init();
+
+      var qExtraSite = keySiteFilterDict[subSiteKey];
+      if (qExtraSite && qExtraSite.length > 0) {
+         qNewExtra += qExtraSite;
+         //alert("qExtra: '" + qExtra + "'");
+      }
+   }
+
+   // do the search from a search page
+   this.doPageSearch = function (qNew) {
+      init();
+
+      pageSearch(qNew);
+   };
+
+   // do the search from global search
+   this.doGlobalSearch = function (qNew) {
+      init();
+      qNewExtra = '';
+      var subSiteKey = '';
+
+      var sitePiecesFromUrl = getSitePiecesFromThisUrl();
+      var sitePiecesFromUrlAsString = sitePiecesFromUrl.toString();
+      if (sitePiecesFromUrlAsString.indexOf("www.minitab.com") < 0) {
+         // new feb '15 - if we're on www.minitab.com, search filter defaults to all (NOT www.minitab.com as it did in '14)
+         subSiteKey = getFirstSubSiteKey(sitePiecesFromUrl);
+         if (subSiteKey && subSiteKey.length > 0) {
+            var siteFilter = keySiteFilterDict[subSiteKey];
+            if (siteFilter && siteFilter.length > 0) {
+               qNewExtra = siteFilter;
+            }
+         }
+      }
+
+      globalSearch(qNew);
+   };
+};
+
+MC.siteSearch = new MC.siteSearchObj();
+
+// http://it.minitab.com/en-us/search/default.aspx?qs=nothing (IE-11)
+// window.location properties:
+//   .hash: ''
+//   .host: 'it.minitab.com'
+//   .hostname: 'it.minitab.com'
+//   .href: 'http://it.minitab.com/en-us/search/default.aspx?qs=nothing'
+//   .origin: 'http://it.minitab.com'
+//   .pathname: '/en-us/search/default.aspx'
+//   .port: ''
+//   .protocol: 'http:'
+//   .search: '?qs=nothing'
+
+// SIG // Begin signature block
+// SIG // MIIgRwYJKoZIhvcNAQcCoIIgODCCIDQCAQExDzANBglg
+// SIG // hkgBZQMEAgEFADB3BgorBgEEAYI3AgEEoGkwZzAyBgor
+// SIG // BgEEAYI3AgEeMCQCAQEEEBDgyQbOONQRoqMAEEvTUJAC
+// SIG // AQACAQACAQACAQACAQAwMTANBglghkgBZQMEAgEFAAQg
+// SIG // Ix9utJUrs4kQG5r72MZpDcYhP0Xg2fMPjJQm5YISA6ug
+// SIG // gg7AMIIGsDCCBJigAwIBAgIQCK1AsmDSnEyfXs2pvZOu
+// SIG // 2TANBgkqhkiG9w0BAQwFADBiMQswCQYDVQQGEwJVUzEV
+// SIG // MBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
+// SIG // d3cuZGlnaWNlcnQuY29tMSEwHwYDVQQDExhEaWdpQ2Vy
+// SIG // dCBUcnVzdGVkIFJvb3QgRzQwHhcNMjEwNDI5MDAwMDAw
+// SIG // WhcNMzYwNDI4MjM1OTU5WjBpMQswCQYDVQQGEwJVUzEX
+// SIG // MBUGA1UEChMORGlnaUNlcnQsIEluYy4xQTA/BgNVBAMT
+// SIG // OERpZ2lDZXJ0IFRydXN0ZWQgRzQgQ29kZSBTaWduaW5n
+// SIG // IFJTQTQwOTYgU0hBMzg0IDIwMjEgQ0ExMIICIjANBgkq
+// SIG // hkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA1bQvQtAorXi3
+// SIG // XdU5WRuxiEL1M4zrPYGXcMW7xIUmMJ+kjmjYXPXrNCQH
+// SIG // 4UtP03hD9BfXHtr50tVnGlJPDqFX/IiZwZHMgQM+TXAk
+// SIG // ZLON4gh9NH1MgFcSa0OamfLFOx/y78tHWhOmTLMBICXz
+// SIG // ENOLsvsI8IrgnQnAZaf6mIBJNYc9URnokCF4RS6hnyzh
+// SIG // GMIazMXuk0lwQjKP+8bqHPNlaJGiTUyCEUhSaN4QvRRX
+// SIG // XegYE2XFf7JPhSxIpFaENdb5LpyqABXRN/4aBpTCfMjq
+// SIG // GzLmysL0p6MDDnSlrzm2q2AS4+jWufcx4dyt5Big2MEj
+// SIG // R0ezoQ9uo6ttmAaDG7dqZy3SvUQakhCBj7A7CdfHmzJa
+// SIG // wv9qYFSLScGT7eG0XOBv6yb5jNWy+TgQ5urOkfW+0/tv
+// SIG // k2E0XLyTRSiDNipmKF+wc86LJiUGsoPUXPYVGUztYuBe
+// SIG // M/Lo6OwKp7ADK5GyNnm+960IHnWmZcy740hQ83eRGv7b
+// SIG // UKJGyGFYmPV8AhY8gyitOYbs1LcNU9D4R+Z1MI3sMJN2
+// SIG // FKZbS110YU0/EpF23r9Yy3IQKUHw1cVtJnZoEUETWJrc
+// SIG // JisB9IlNWdt4z4FKPkBHX8mBUHOFECMhWWCKZFTBzCEa
+// SIG // 6DgZfGYczXg4RTCZT/9jT0y7qg0IU0F8WD1Hs/q27Iwy
+// SIG // CQLMbDwMVhECAwEAAaOCAVkwggFVMBIGA1UdEwEB/wQI
+// SIG // MAYBAf8CAQAwHQYDVR0OBBYEFGg34Ou2O/hfEYb7/mF7
+// SIG // CIhl9E5CMB8GA1UdIwQYMBaAFOzX44LScV1kTN8uZz/n
+// SIG // upiuHA9PMA4GA1UdDwEB/wQEAwIBhjATBgNVHSUEDDAK
+// SIG // BggrBgEFBQcDAzB3BggrBgEFBQcBAQRrMGkwJAYIKwYB
+// SIG // BQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBB
+// SIG // BggrBgEFBQcwAoY1aHR0cDovL2NhY2VydHMuZGlnaWNl
+// SIG // cnQuY29tL0RpZ2lDZXJ0VHJ1c3RlZFJvb3RHNC5jcnQw
+// SIG // QwYDVR0fBDwwOjA4oDagNIYyaHR0cDovL2NybDMuZGln
+// SIG // aWNlcnQuY29tL0RpZ2lDZXJ0VHJ1c3RlZFJvb3RHNC5j
+// SIG // cmwwHAYDVR0gBBUwEzAHBgVngQwBAzAIBgZngQwBBAEw
+// SIG // DQYJKoZIhvcNAQEMBQADggIBADojRD2NCHbuj7w6mdNW
+// SIG // 4AIapfhINPMstuZ0ZveUcrEAyq9sMCcTEp6QRJ9L/Z6j
+// SIG // fCbVN7w6XUhtldU/SfQnuxaBRVD9nL22heB2fjdxyyL3
+// SIG // WqqQz/WTauPrINHVUHmImoqKwba9oUgYftzYgBoRGRjN
+// SIG // YZmBVvbJ43bnxOQbX0P4PpT/djk9ntSZz0rdKOtfJqGV
+// SIG // WEjVGv7XJz/9kNF2ht0csGBc8w2o7uCJob054ThO2m67
+// SIG // Np375SFTWsPK6Wrxoj7bQ7gzyE84FJKZ9d3OVG3ZXQIU
+// SIG // H0AzfAPilbLCIXVzUstG2MQ0HKKlS43Nb3Y3LIU/Gs4m
+// SIG // 6Ri+kAewQ3+ViCCCcPDMyu/9KTVcH4k4Vfc3iosJocsL
+// SIG // 6TEa/y4ZXDlx4b6cpwoG1iZnt5LmTl/eeqxJzy6kdJKt
+// SIG // 2zyknIYf48FWGysj/4+16oh7cGvmoLr9Oj9FpsToFpFS
+// SIG // i0HASIRLlk2rREDjjfAVKM7t8RhWByovEMQMCGQ8M4+u
+// SIG // KIw8y4+ICw2/O/TOHnuO77Xry7fwdxPm5yg/rBKupS8i
+// SIG // bEH5glwVZsxsDsrFhsP2JjMMB0ug0wcCampAMEhLNKhR
+// SIG // ILutG4UI4lkNbcoFUCvqShyepf2gpx8GdOfy1lKQ/a+F
+// SIG // SCH5Vzu0nAPthkX0tGFuv2jiJmCG6sivqf6UHedjGzqG
+// SIG // VnhOMIIICDCCBfCgAwIBAgIQBzkFM164IT4ReX6SYe1C
+// SIG // OjANBgkqhkiG9w0BAQsFADBpMQswCQYDVQQGEwJVUzEX
+// SIG // MBUGA1UEChMORGlnaUNlcnQsIEluYy4xQTA/BgNVBAMT
+// SIG // OERpZ2lDZXJ0IFRydXN0ZWQgRzQgQ29kZSBTaWduaW5n
+// SIG // IFJTQTQwOTYgU0hBMzg0IDIwMjEgQ0ExMB4XDTIxMDky
+// SIG // MjAwMDAwMFoXDTIyMDkyMjIzNTk1OVowgd0xHTAbBgNV
+// SIG // BA8MFFByaXZhdGUgT3JnYW5pemF0aW9uMRMwEQYLKwYB
+// SIG // BAGCNzwCAQMTAlVTMRkwFwYLKwYBBAGCNzwCAQITCERl
+// SIG // bGF3YXJlMRAwDgYDVQQFEwc3MjYzMjAxMQswCQYDVQQG
+// SIG // EwJVUzEVMBMGA1UECBMMUGVubnN5bHZhbmlhMRYwFAYD
+// SIG // VQQHEw1TdGF0ZSBDb2xsZWdlMRUwEwYDVQQKEwxNaW5p
+// SIG // dGFiLCBMTEMxEDAOBgNVBAsTB01pbml0YWIxFTATBgNV
+// SIG // BAMTDE1pbml0YWIsIExMQzCCAiIwDQYJKoZIhvcNAQEB
+// SIG // BQADggIPADCCAgoCggIBAMmjL24N7ev0yJghcaspu8Yb
+// SIG // 0Jk58ItBp9J6QzGYCu8ylwHSv79S5UuXqdxOrfbW+EVP
+// SIG // VsfWSEXDDT6pp/X+IIKkOx7m+WFR6AIcZ7EAuM/OLwNT
+// SIG // vDWRw1HzsSitVAtaTo5gnp0JrCej92+mVOLLtOgqSXsE
+// SIG // PqIy7Xk9ViffKJQgXpTIDodzio4KaVhQVY/IAXNh0teC
+// SIG // BZ127pkwOjFsjGrUMaMOIgmqNhddF96tboIIudtmU/8R
+// SIG // yRecsU8y9RlmQe98TH/TC6AyDWuZo/msL5Mcd5pmkK/f
+// SIG // TCcfeKz7PudnQLY2ikZIzSiwZBs6fKwW42R3AMKrWjeT
+// SIG // v2/AQb8NDk72LIb9U/msofOao+UK+qLPugyLXsgvh112
+// SIG // p6+IYRYiCv8M6xhLf59tm37KMlZyY2+3QaVDJ1zR5pbT
+// SIG // DbhuLECtjX/JBfVAYTmXmP/dcY1QaGtKzx6xq6TfajPQ
+// SIG // /HQGYlz72wdZzr0E2wbcQf8kTUT67Lhi+II4pbLZiLwl
+// SIG // OC+F2wvowuG1kT5tR7GUD1BDd/j65N0hQLiNAnByH1RY
+// SIG // ykbnDLI3v4rWAqLqWqni74eaOVozfoSEr+Fz1GIUzYt/
+// SIG // o0AbDPkd/G5nMP8ALVXpnf9fOOp6ng0Yu4i1NVmwzRBE
+// SIG // 6KplpBbeO86c2kB25LYKMxQlVQ7/Dw92P+kZrpv57dbf
+// SIG // AgMBAAGjggI1MIICMTAfBgNVHSMEGDAWgBRoN+Drtjv4
+// SIG // XxGG+/5hewiIZfROQjAdBgNVHQ4EFgQUAePNOkzE+lWk
+// SIG // pzPd9YcSkD3aBJgwLgYDVR0RBCcwJaAjBggrBgEFBQcI
+// SIG // A6AXMBUME1VTLURFTEFXQVJFLTcyNjMyMDEwDgYDVR0P
+// SIG // AQH/BAQDAgeAMBMGA1UdJQQMMAoGCCsGAQUFBwMDMIG1
+// SIG // BgNVHR8Ega0wgaowU6BRoE+GTWh0dHA6Ly9jcmwzLmRp
+// SIG // Z2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRHNENvZGVT
+// SIG // aWduaW5nUlNBNDA5NlNIQTM4NDIwMjFDQTEuY3JsMFOg
+// SIG // UaBPhk1odHRwOi8vY3JsNC5kaWdpY2VydC5jb20vRGln
+// SIG // aUNlcnRUcnVzdGVkRzRDb2RlU2lnbmluZ1JTQTQwOTZT
+// SIG // SEEzODQyMDIxQ0ExLmNybDA9BgNVHSAENjA0MDIGBWeB
+// SIG // DAEDMCkwJwYIKwYBBQUHAgEWG2h0dHA6Ly93d3cuZGln
+// SIG // aWNlcnQuY29tL0NQUzCBlAYIKwYBBQUHAQEEgYcwgYQw
+// SIG // JAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0
+// SIG // LmNvbTBcBggrBgEFBQcwAoZQaHR0cDovL2NhY2VydHMu
+// SIG // ZGlnaWNlcnQuY29tL0RpZ2lDZXJ0VHJ1c3RlZEc0Q29k
+// SIG // ZVNpZ25pbmdSU0E0MDk2U0hBMzg0MjAyMUNBMS5jcnQw
+// SIG // DAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOCAgEA
+// SIG // qZzNbc34WUIxPNgoFO/gjJHREvufUCwYJVgeEVaVCzjh
+// SIG // glVxis9P9OdvMJl8LODhBf8vGTNzzLsP8G/jRpk8nSqi
+// SIG // ZEQ7uv2KZ28W+WIY0cK/ADJyi3lxE0BRVtJLe/nx5mI4
+// SIG // SVfw401pCcnxkceBI/4iFETu6eaU+SJoc0gXGfyMMikR
+// SIG // qygKhtIsDl2zx9ZrW9bA/SQ+jqASzl2vbXISQsoh8D3Z
+// SIG // nOT3Z4jCwpQUEAS1uv2EvvniUgRJ6DBWbqGS+P172uRa
+// SIG // SDO2TNN36woqPmr5TlWgU7KwQ+7DV5T07Qur5fLZ4Hpb
+// SIG // Qc71uC8aukxsutKsTBzXW2jx6A+3DulXBx+vvL5gHRtW
+// SIG // CykT3wDuUkywMFeEkucXJpuOgfVdhnWVDe7SJHAgmwBE
+// SIG // R5LVhCqP/PSmIjWQwCTFHTSUrF01ezhrGJxU6prUYcn2
+// SIG // K24JEsD41GbbctMTebBflHTPePt0JIjjv3COwGBS7N4X
+// SIG // 70BBK51FDuvJggTMax7gzUUWJdGJkaVT+HVSpTuRhxuu
+// SIG // uQYAEqG0LEpVx10bkhXsQ1+My31RJST5LlkAdvVpKzLz
+// SIG // O3Y8ao7j9URPta7xLU/v3wZZfXlj748Rr2OZk48KaIwO
+// SIG // ngY9UxOB2KoE+YE8WmwKUXHxp+s8F/yruMLUvLLXxDeH
+// SIG // lEVavgTfuH53bOfmjtV4lQExghDfMIIQ2wIBATB9MGkx
+// SIG // CzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2VydCwg
+// SIG // SW5jLjFBMD8GA1UEAxM4RGlnaUNlcnQgVHJ1c3RlZCBH
+// SIG // NCBDb2RlIFNpZ25pbmcgUlNBNDA5NiBTSEEzODQgMjAy
+// SIG // MSBDQTECEAc5BTNeuCE+EXl+kmHtQjowDQYJYIZIAWUD
+// SIG // BAIBBQCggbIwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcC
+// SIG // AQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUw
+// SIG // LwYJKoZIhvcNAQkEMSIEIIAK2fbIxHDoiW53n/ywmZSB
+// SIG // fWJO/BULowgvlmQfkaOsMEYGCisGAQQBgjcCAQwxODA2
+// SIG // oBqAGABNAGkAbgBpAHQAYQBiACAAMQA5AC4AMaEYgBZo
+// SIG // dHRwOi8vd3d3Lm1pbml0YWIuY29tMA0GCSqGSIb3DQEB
+// SIG // AQUABIICAHuRrautof2zu380K/4N4csFAH2woUioIjaA
+// SIG // JuXnxl6o1isxH15XrrnIIgjw/SS5xrGHf2B/fRl2MkLX
+// SIG // Pvgg6wSzRCm3QlOPvYRvtgTvzd3i7JnL32ms25nR9cFf
+// SIG // 9U7KudAbhC51C8I+wDUbA+PR9wKdAJytSrYfJPjydJwR
+// SIG // sLaelFC72hOly2K3KjoIb/ggAcw2NXg/sXEkQeTyHFAc
+// SIG // ci0togsg2Q4OW3msYE3Ih+ip70qZ4H7KOMiW59LmASek
+// SIG // JhXTi0ySGCJl74tHAIApAzdW/UYslxQN8lnbIFgcqpVC
+// SIG // MRUxah1+82uy9JcgPDyBGYfzhx1L8o+sZPWW/Sb1o5Nc
+// SIG // Tvov4SsxVt71K3bqDnKOTStS+4zlWZ6mA4aPR1lbrbQv
+// SIG // m6coBM294eiThlNWbZRr8nTvFmgAcjM9qIThFRDJWGXq
+// SIG // +qbWH+4bJ8lsAT1WXgVkCwY6ztuqBB/1kMt1/VoWfdoG
+// SIG // 9IzBkRhN6fScjfor20YtMgeUZj3+eQKysUgKLGOWAz/w
+// SIG // M+RFpmiwQ5/1dADTxzwfiRyb9fSByDCW+y+cKcwtO0u5
+// SIG // Jf32yU7xfTyYkC/Ta4WH2HkGQq0iR6A8h5hrXO4YluaQ
+// SIG // Xk9SItxttBMTOUJN+RvjUos8k/zw/dFKBMDbTmFcS/Wo
+// SIG // 3CvoZYb1uwBqolxYPNkGpQhr+2ANFEcboYINfjCCDXoG
+// SIG // CisGAQQBgjcDAwExgg1qMIINZgYJKoZIhvcNAQcCoIIN
+// SIG // VzCCDVMCAQMxDzANBglghkgBZQMEAgEFADB4BgsqhkiG
+// SIG // 9w0BCRABBKBpBGcwZQIBAQYJYIZIAYb9bAcBMDEwDQYJ
+// SIG // YIZIAWUDBAIBBQAEIKLUBWgbNjEGcx9IKkpwtXBXyvWu
+// SIG // ByMJmpre6+cCdEssAhEA0vzRWXlDpEXhPV2VEdrDLBgP
+// SIG // MjAyMTEwMTMxNzEwNTNaoIIKNzCCBP4wggPmoAMCAQIC
+// SIG // EA1CSuC+Ooj/YEAhzhQA8N0wDQYJKoZIhvcNAQELBQAw
+// SIG // cjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0
+// SIG // IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEx
+// SIG // MC8GA1UEAxMoRGlnaUNlcnQgU0hBMiBBc3N1cmVkIElE
+// SIG // IFRpbWVzdGFtcGluZyBDQTAeFw0yMTAxMDEwMDAwMDBa
+// SIG // Fw0zMTAxMDYwMDAwMDBaMEgxCzAJBgNVBAYTAlVTMRcw
+// SIG // FQYDVQQKEw5EaWdpQ2VydCwgSW5jLjEgMB4GA1UEAxMX
+// SIG // RGlnaUNlcnQgVGltZXN0YW1wIDIwMjEwggEiMA0GCSqG
+// SIG // SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDC5mGEZ8WK9Q0I
+// SIG // pEXKY2tR1zoRQr0KdXVNlLQMULUmEP4dyG+RawyW5xpc
+// SIG // SO9E5b+bYc0VkWJauP9nC5xj/TZqgfop+N0rcIXeAhjz
+// SIG // eG28ffnHbQk9vmp2h+mKvfiEXR52yeTGdnY6U9HR01o2
+// SIG // j8aj4S8bOrdh1nPsTm0zinxdRS1LsVDmQTo3VobckyON
+// SIG // 91Al6GTm3dOPL1e1hyDrDo4s1SPa9E14RuMDgzEpSlwM
+// SIG // MYpKjIjF9zBa+RSvFV9sQ0kJ/SYjU/aNY+gaq1uxHTDC
+// SIG // m2mCtNv8VlS8H6GHq756WwogL0sJyZWnjbL61mOLTqVy
+// SIG // HO6fegFz+BnW/g1JhL0BAgMBAAGjggG4MIIBtDAOBgNV
+// SIG // HQ8BAf8EBAMCB4AwDAYDVR0TAQH/BAIwADAWBgNVHSUB
+// SIG // Af8EDDAKBggrBgEFBQcDCDBBBgNVHSAEOjA4MDYGCWCG
+// SIG // SAGG/WwHATApMCcGCCsGAQUFBwIBFhtodHRwOi8vd3d3
+// SIG // LmRpZ2ljZXJ0LmNvbS9DUFMwHwYDVR0jBBgwFoAU9Lbh
+// SIG // IB3+Ka7S5GGlsqIlssgXNW4wHQYDVR0OBBYEFDZEho6k
+// SIG // urBmvrwoLR1ENt3janq8MHEGA1UdHwRqMGgwMqAwoC6G
+// SIG // LGh0dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9zaGEyLWFz
+// SIG // c3VyZWQtdHMuY3JsMDKgMKAuhixodHRwOi8vY3JsNC5k
+// SIG // aWdpY2VydC5jb20vc2hhMi1hc3N1cmVkLXRzLmNybDCB
+// SIG // hQYIKwYBBQUHAQEEeTB3MCQGCCsGAQUFBzABhhhodHRw
+// SIG // Oi8vb2NzcC5kaWdpY2VydC5jb20wTwYIKwYBBQUHMAKG
+// SIG // Q2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdp
+// SIG // Q2VydFNIQTJBc3N1cmVkSURUaW1lc3RhbXBpbmdDQS5j
+// SIG // cnQwDQYJKoZIhvcNAQELBQADggEBAEgc3LXpmiO85xrn
+// SIG // IA6OZ0b9QnJRdAojR6OrktIlxHBZvhSg5SeBpU0UFRkH
+// SIG // efDRBMOG2Tu9/kQCZk3taaQP9rhwz2Lo9VFKeHk2eie3
+// SIG // 8+dSn5On7UOee+e03UEiifuHokYDTvz0/rdkd2NfI1Jp
+// SIG // g4L6GlPtkMyNoRdzDfTzZTlwS/Oc1np72gy8PTLQG8v1
+// SIG // Yfx1CAB2vIEO+MDhXM/EEXLnG2RJ2CKadRVC9S0yOIHa
+// SIG // 9GCiurRS+1zgYSQlT7LfySmoc0NR2r1j1h9bm/cuG08T
+// SIG // HfdKDXF+l7f0P4TrweOjSaH6zqe/Vs+6WXZhiV9+p7SO
+// SIG // Z3j5NpjhyyjaW4emii8wggUxMIIEGaADAgECAhAKoSXW
+// SIG // 1jIbfkHkBdo2l8IVMA0GCSqGSIb3DQEBCwUAMGUxCzAJ
+// SIG // BgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMx
+// SIG // GTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
+// SIG // BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAe
+// SIG // Fw0xNjAxMDcxMjAwMDBaFw0zMTAxMDcxMjAwMDBaMHIx
+// SIG // CzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJ
+// SIG // bmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xMTAv
+// SIG // BgNVBAMTKERpZ2lDZXJ0IFNIQTIgQXNzdXJlZCBJRCBU
+// SIG // aW1lc3RhbXBpbmcgQ0EwggEiMA0GCSqGSIb3DQEBAQUA
+// SIG // A4IBDwAwggEKAoIBAQC90DLuS82Pf92puoKZxTlUKFe2
+// SIG // I0rEDgdFM1EQfdD5fU1ofue2oPSNs4jkl79jIZCYvxO8
+// SIG // V9PD4X4I1moUADj3Lh477sym9jJZ/l9lP+Cb6+NGRwYa
+// SIG // VX4LJ37AovWg4N4iPw7/fpX786O6Ij4YrBHk8JkDbTuF
+// SIG // fAnT7l3ImgtU46gJcWvgzyIQD3XPcXJOCq3fQDpct1Hh
+// SIG // oXkUxk0kIzBdvOw8YGqsLwfM/fDqR9mIUF79Zm5WYScp
+// SIG // iYRR5oLnRlD9lCosp+R1PrqYD4R/nzEU1q3V8mTLex4F
+// SIG // 0IQZchfxFwbvPc3WTe8GQv2iUypPhR3EHTyvz9qsEPXd
+// SIG // rKzpVv+TAgMBAAGjggHOMIIByjAdBgNVHQ4EFgQU9Lbh
+// SIG // IB3+Ka7S5GGlsqIlssgXNW4wHwYDVR0jBBgwFoAUReui
+// SIG // r/SSy4IxLVGLp6chnfNtyA8wEgYDVR0TAQH/BAgwBgEB
+// SIG // /wIBADAOBgNVHQ8BAf8EBAMCAYYwEwYDVR0lBAwwCgYI
+// SIG // KwYBBQUHAwgweQYIKwYBBQUHAQEEbTBrMCQGCCsGAQUF
+// SIG // BzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYI
+// SIG // KwYBBQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0
+// SIG // LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RDQS5jcnQw
+// SIG // gYEGA1UdHwR6MHgwOqA4oDaGNGh0dHA6Ly9jcmw0LmRp
+// SIG // Z2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
+// SIG // QS5jcmwwOqA4oDaGNGh0dHA6Ly9jcmwzLmRpZ2ljZXJ0
+// SIG // LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RDQS5jcmww
+// SIG // UAYDVR0gBEkwRzA4BgpghkgBhv1sAAIEMCowKAYIKwYB
+// SIG // BQUHAgEWHGh0dHBzOi8vd3d3LmRpZ2ljZXJ0LmNvbS9D
+// SIG // UFMwCwYJYIZIAYb9bAcBMA0GCSqGSIb3DQEBCwUAA4IB
+// SIG // AQBxlRLpUYdWac3v3dp8qmN6s3jPBjdAhO9LhL/KzwMC
+// SIG // /cWnww4gQiyvd/MrHwwhWiq3BTQdaq6Z+CeiZr8JqmDf
+// SIG // dqQ6kw/4stHYfBli6F6CJR7Euhx7LCHi1lssFDVDBGiy
+// SIG // 23UC4HLHmNY8ZOUfSBAYX4k4YU1iRiSHY4yRUiyvKYnl
+// SIG // eB/WCxSlgNcSR3CzddWThZN+tpJn+1Nhiaj1a5bA9Fhp
+// SIG // DXzIAbG5KHW3mWOFIoxhynmUfln8jA/jb7UBJrZspe6H
+// SIG // USHkWGCbugwtK22ixH67xCUrRwIIfEmuE7bhfEJCKMYY
+// SIG // Vs9BNLZmXbZ0e/VWMyIvIjayS6JKldj1po5SMYIChjCC
+// SIG // AoICAQEwgYYwcjELMAkGA1UEBhMCVVMxFTATBgNVBAoT
+// SIG // DERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2lj
+// SIG // ZXJ0LmNvbTExMC8GA1UEAxMoRGlnaUNlcnQgU0hBMiBB
+// SIG // c3N1cmVkIElEIFRpbWVzdGFtcGluZyBDQQIQDUJK4L46
+// SIG // iP9gQCHOFADw3TANBglghkgBZQMEAgEFAKCB0TAaBgkq
+// SIG // hkiG9w0BCQMxDQYLKoZIhvcNAQkQAQQwHAYJKoZIhvcN
+// SIG // AQkFMQ8XDTIxMTAxMzE3MTA1M1owKwYLKoZIhvcNAQkQ
+// SIG // AgwxHDAaMBgwFgQU4deCqOGRvu9ryhaRtaq0lKYkm/Mw
+// SIG // LwYJKoZIhvcNAQkEMSIEIP/X5mBw2aKykAa1FjPTi7IW
+// SIG // qj9gKE3QSJCp8pG9Ty3RMDcGCyqGSIb3DQEJEAIvMSgw
+// SIG // JjAkMCIEILMQkAa8CtmDB5FXKeBEA0Fcg+MpK2FPJpZM
+// SIG // jTVx7PWpMA0GCSqGSIb3DQEBAQUABIIBAHeyL9BE3Ker
+// SIG // flf/VNifyFy8ptcgLic7+G02ff+sz8IofWMlgOPXmKmp
+// SIG // hg0LpJkMQbK8SHObiOuNHQjay60cpRh5ixzVYnYPX4Lk
+// SIG // VAdnJJAQci885U2u2sM1tOBCZvdIatJOZoyLZeXh9lfR
+// SIG // d1xyfx+a7WsOlQb9B1K1IXCkI6wWrZCUc7lWL5/ytF8t
+// SIG // o+myp+P86mPQ8mqEqKUJIKmeS3rd6NyZqqpscia1vlww
+// SIG // i7awR94zXqTe5sOA7GnA+1YpwM0iDZ3/XGyOLoMZ5y0R
+// SIG // wWbU/gW5RS0cqAimfwZG9sCfHhuUCEhC34x+kmLbMDZm
+// SIG // j4PU1UmtV7V1hXoPilk2Wsk=
+// SIG // End signature block

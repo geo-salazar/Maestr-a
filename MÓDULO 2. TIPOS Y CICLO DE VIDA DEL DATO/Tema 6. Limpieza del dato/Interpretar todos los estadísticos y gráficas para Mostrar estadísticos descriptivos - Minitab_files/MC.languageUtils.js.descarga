@@ -1,0 +1,813 @@
+﻿
+// ensure namespace MC (minitab.com - it.minitab.com, support.minitab.com, www.minitab.com) exists
+var MC = (MC == null || typeof (MC) != "object") ? new Object() : MC;
+
+// notes:
+// this file is maintained in the it.minitab.com solution (called EverestSolution-AppsDot as of this writing Aug '13)
+// it is then copied to the other solutions
+// window.location.href starts with "http://" and includes query string, eg: "http://it.minitab.com/whatever?a=1&b=2"
+// window.location.pathname starts with slash and doesn't include query string, eg: "/en-us/whatever"
+
+MC.languageUtils = new function () {
+   // private fields (sorta)
+   var hrefsChangedDebugging = new Array();
+   var languageProcessingIsDone = false;
+   var localeCodeFromPath = '';
+   var isTestViaAlerts = false;
+   // note: ^ here in MC.languageUtils, we need a flag for isTestViaAlerts because it's only meaninful AFTER languageProcessingIsDone
+   var alertMessages = new Array();
+   var $allAnchors;
+   var langVals = new Object({
+      localeCode: 'en-us',
+      localeId: 1033,
+      source: '' // NOTE: this needs to be '' because a condition down below depends on it
+   });
+
+   var siteHosts = new Object({
+      // from IE (running locally):
+      // window.location.properties:
+      // window.location.hash: ''
+      // window.location.host: 'localhost:1912'
+      // window.location.hostname: 'localhost'
+      // window.location.href: 'http://localhost:1912/en-us/default.aspx'
+      // window.location.pathname: '/en-us/default.aspx'
+      // window.location.port: '1912'
+      // window.location.protocol: 'http:'
+      // window.location.search: ''
+      thisSite: window.location.host,
+      it: 'it.minitab.com',
+      support: 'support.minitab.com',
+      www: 'www.minitab.com'
+      // note: thisSite is overridden by, for example: MC.languageUtils.doLanguageProcessing('it.minitab.com');
+   });
+
+   // eg: localeIdLocaleCodeDict[localeId] where localeId = 1036 yields 'fr-fr'
+   var localeIdLocaleCodeDict = new Object();
+   localeIdLocaleCodeDict[1033] = 'en-us';
+   localeIdLocaleCodeDict[1031] = 'de-de';
+   localeIdLocaleCodeDict[2058] = 'es-mx';
+   localeIdLocaleCodeDict[1036] = 'fr-fr';
+   localeIdLocaleCodeDict[1046] = 'pt-br';
+   localeIdLocaleCodeDict[2052] = 'zh-cn';
+   localeIdLocaleCodeDict[1042] = 'ko-kr';
+   localeIdLocaleCodeDict[1041] = 'ja-jp';
+   // note: ^ it looks like an array, but it's an object with property names that are numbers - JavaScript is ok with that
+
+   // private functions - processing (in the order that they're used)
+   function init() {
+      $allAnchors = $('a');
+
+      // once init'd, point init() to a no-op
+      init = function () { };
+   }
+
+   function setLangValsFromPath() {
+      var slashPathLower = window.location.pathname.toLowerCase();
+      var localeCode = getLocaleCodeFromPathFront(slashPathLower);
+      if (localeCode && localeCode.length > 0) {
+         setLangVals(localeCode, 'URL');
+         localeCodeFromPath = localeCode;
+      }
+   }
+
+   function setLangValsFromSmcCookie() {
+      var localeCode = MC.cookieUtils.getSubCookieValue('smc', 'localeCode');
+      if (localeCode && localeCode.length == 5) {
+         setLangVals(localeCode, 'smc (minitab.com) cookie');
+
+/*         // new for support.mintitab.com - starts here
+         var slashPath = window.location.pathname;
+         var slashPathLower = window.location.pathname.toLowerCase();
+         if (localeCodeIsInSlashPathFront(slashPathLower) == false) {
+            // doesn't have a locale code, construct this url with the cookie's locale code then redirect
+            var newSlashPath = "/" + localeCode.localeCode + slashPath;
+            var newUrl = window.location.href.replace(slashPath, newSlashPath);
+            try {
+               window.location.replace(newUrl); // see: note*1:
+            } catch (e) {
+               // don't care what the exception is, onward!
+               window.location.href = newUrl;
+            } 
+         }
+         // new for support.mintitab.com - ends here*/
+      }
+   }
+
+   function processLangSelector() {
+      var $langSelector = $('#lang');
+      if ($langSelector.length > 0) {
+         // note: $langSelector.children("option:selected") returns only the last one when more than one is selected - jq bug?
+         var $selectedOptions = $langSelector.children("option").filter('[selected="selected"]');
+         if ($selectedOptions.length > 0) {
+            // unselect all
+            $selectedOptions.attr("selected", false);
+         }
+
+         // set $langSelector selected value to reflect current localeCode
+         $langSelector.val(langVals.localeCode).attr("selected", "selected");
+
+         // set up $langSelector change event
+         $langSelector.change(function () {
+            var newLocaleCode = $langSelector.val();
+            if (newLocaleCode != langVals.localeCode) {
+               var newUrl = getThisUrlWithNewLocaleCode(newLocaleCode);
+               if (newUrl && newUrl.length > 0) {
+                  // newLocaleCode differs from langVals.localeCode, so set the minitab.com cookie with newLocaleCode
+                  MC.cookieUtils.setSmcCookieSubNameSubValue('localeCode', newLocaleCode);
+
+                  // redirect back to this url constructed with the newly selected locale code
+                  window.location = newUrl;
+               }
+            }
+         });
+      }
+   }
+
+   // concern:
+   // http://it.minitab.com/en-us/my-account/sign-in.aspx?returnUrl=http://www.minitab.com/en-us/academic/
+   // with returnUrl partialy encode like:
+   // returnUrl=http%3a%2f%2fwww.minitab.com/en-us%2fen-us%2facademic%2f
+   // note: 
+   // http://it.minitab.com/en-us/my-account/sign-in.aspx?returnUrl=http%3a%2f%2fwww.minitab.com/en-us%2fen-us%2facademic%2f
+   // http://it.minitab.com/en-us/my-account/sign-in.aspx?returnUrl=http%3a%2f%2fwww.minitab.com/en-us%2fen-us%2facademic%2f
+   // one actual problem result:
+   // http://it.minitab.com/en-us/my-account/sign-in.aspx?returnUrl=http%3a%2f%2fwww.minitab.com/en-us%2fen-us%2facademic%2f
+
+   function doLanguageProcessingForThisSite() {
+      if (languageProcessingIsDone) {
+         return;
+      }
+
+      switch (siteHosts.thisSite) {
+         //case siteHosts.it:
+         //   processLangSelector();
+         //   addLangToHrefs_itStartWithSlash();
+         //   addLangToHrefs_it();
+         //   addLangToHrefs_support();
+         //   addLangToHrefs_www();
+         //   break;
+
+         case siteHosts.support:
+            processLangSelector();
+            addLangToHrefs_support();
+            //addLangToHrefs_it();
+            //addLangToHrefs_www_support();
+            break;
+
+         //case siteHosts.www:
+         //   doEktronExternalLinksFix();
+         //   addLangToHrefs_it();
+         //   addLangToHrefs_support();
+         //   addLangToHrefs_www();
+         //   addLangToHrefs_wwwStartWithSlash();
+         //   break;
+
+         default:
+            //if (MC.queryStringUtils.isTestViaAlerts()) {
+            //   var msg = "Warning: Cannot do language processing for this site." +
+            //       "\n\nsiteHosts.thisSite: '" + siteHosts.thisSite + "'" +
+            //       "\n\nwindow.location.host: " + window.location.host + "'";
+            //   alert(msg);
+            //}
+            break;
+      } // switch (siteHosts.thisSite)
+
+      languageProcessingIsDone = true;
+   }
+
+   // a problem that was happening:
+   // oldHref = 'javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions("ctl00$Main$Customer_Login$LoginView1$Login1$OurLoginButton", "", true, "Login1", "", false, true))'
+   // newHref = 'javascript:webform_dopostbackwithoptions(new webform_postbackoptions("ctl00$main$customer_login$loginview1$login1$ourloginbutton", "", true, "login1", "", false, true))'
+   function isWwwHrefOkToProcess(href) {
+      var isOkToProcess = true;
+
+      // the callers are such that all hrefs start with either "www.minitab.com" or "/"
+      if (href && href.length > 0) {
+         var hrefLower = href.toLowerCase();
+
+         if (hrefLower.indexOf('www.minitab.com.') >= 0) {
+            // note: ^ trailing dot in 'www.minitab.com.' - was problem in old site, but might be gone now
+            isOkToProcess = false;
+         } else if (hrefLower.indexOf('javascript') >= 0 || hrefLower.indexOf('workarea') >= 0 ||
+             hrefLower.indexOf('uploadedfiles') >= 0 || hrefLower.indexOf('uploadedimages') >= 0 ||
+             hrefLower.indexOf('assetmanagement') >= 0 || hrefLower.indexOf('assets') >= 0) {
+            isOkToProcess = false;
+         }
+      }
+
+      return isOkToProcess;
+   }
+
+   //function addLangToHrefs_it() {
+   //   //var $itAnchors = $allAnchors.filter('[href*="it.minitab.com"]'); // note: href*= means href.contains(
+   //   var $itAnchors = $allAnchors.filter('[href^="http://it.minitab.com"]'); // note: href^= means href.startsWith(
+
+   //   $itAnchors.each(function (index, element) {
+   //      var $anchor = $(element);
+   //      var oldHref = $anchor.attr('href');
+   //      var slashPathLower = oldHref.replace('http://it.minitab.com/', '/').toLowerCase();
+   //      if (localeCodeIsInSlashPathFront(slashPathLower) == false) {
+   //         var newHref = oldHref.replace('it.minitab.com', 'it.minitab.com/' + langVals.localeCode);
+   //         $anchor.attr('href', newHref);
+
+   //         hrefsChangedDebuggingPush(newHref, oldHref, "addLangToHrefs_it()");
+   //      }
+   //   });
+   //}
+
+   //function addLangToHrefs_itStartWithSlash() {
+   //   // it.minitab.com links - $itAnchors start with '/' so require '/en-us' prepended
+   //   var $itAnchors = $allAnchors.filter('[href^="/"]'); // note: href^= means href.startsWith(
+
+   //   $itAnchors.each(function (index, element) {
+   //      var $anchor = $(element);
+   //      var oldHref = $anchor.attr('href');
+   //      var slashPathLower = oldHref.toLowerCase();
+   //      if (localeCodeIsInSlashPathFront(slashPathLower) == false) {
+   //         var newHref = '/' + langVals.localeCode + oldHref;
+   //         $anchor.attr('href', newHref);
+
+   //         hrefsChangedDebuggingPush(newHref, oldHref, "addLangToHrefs_itStartWithSlash()");
+   //      }
+   //   });
+   //}
+
+   function addLangToHrefs_support() {
+      //var $supportAnchors = $allAnchors.filter('[href*="support.minitab.com"]'); // note: href*= means href.contains(
+      var $supportAnchors = $allAnchors.filter('[href^="https?://support.minitab.com"]'); // note: href^= means href.startsWith(
+
+      $supportAnchors.each(function (index, element) {
+         var $anchor = $(element);
+         var oldHref = $anchor.attr('href');
+         var slashPathLower = oldHref.toLowerCase().replace(/https?:\/\/support.minitab.com\//, '/');
+         if (localeCodeIsInSlashPathFront(slashPathLower) == false) {
+            var newHref = oldHref.replace('support.minitab.com', 'support.minitab.com/' + langVals.localeCode);
+            $anchor.attr('href', newHref);
+
+            hrefsChangedDebuggingPush(newHref, oldHref, "addLangToHrefs_support()");
+         }
+      });
+   }
+
+   function addLangToHrefs_www() {
+      // www.minitab.com links - hrefs need query string, eg: 'LangType=1036'
+      var localeId = getLocaleIdForLocaleCode(langVals.localeCode);
+
+      //var $wwwAnchors = $allAnchors.filter('[href*="www.minitab.com"]'); // note: href*= means href.contains(
+      var $wwwAnchors = $allAnchors.filter('[href^="https?://www.minitab.com"]'); // note: href^= means href.startsWith(
+
+      $wwwAnchors.each(function (index, element) {
+         var $anchor = $(element);
+         var oldHref = $anchor.attr('href');
+         if (isWwwHrefOkToProcess(oldHref)) {
+            var slashPathLower = oldHref.toLowerCase().replace(/https?:\/\/support.minitab.com\//, '/');
+            if (localeCodeIsInSlashPathFront(slashPathLower) == false) {
+               var newHref = oldHref.replace('www.minitab.com', 'www.minitab.com/' + langVals.localeCode);
+               $anchor.attr('href', newHref);
+
+               hrefsChangedDebuggingPush(newHref, oldHref, "addLangToHrefs_www()");
+            }
+         }
+      });
+   }
+
+
+
+   //function addLangToHrefs_www_support() {
+   //   // www.minitab.com links - hrefs need query string, eg: 'LangType=1036'
+   //   // handle additional languages from support
+   //   var localeId = getLocaleIdForLocaleCode(langVals.localeCode);
+        
+   //   //var $wwwAnchors = $allAnchors.filter('[href*="www.minitab.com"]'); // note: href*= means href.contains(
+   //   var $wwwAnchors = $allAnchors.filter('[href^="http://www.minitab.com"]'); // note: href^= means href.startsWith(
+
+   //   $wwwAnchors.each(function (index, element) {
+   //      var $anchor = $(element);
+   //      var oldHref = $anchor.attr('href');
+   //      if (isWwwHrefOkToProcess(oldHref)) {
+   //         var slashPathLower = oldHref.replace('http://www.minitab.com/', '/').toLowerCase();
+   //         if (localeCodeIsInSlashPathFront(slashPathLower) == false) {
+   //             if(langVals.localeCode =='ko-kr' || langVals.localeCode =='ja-jp' || langVals.localeCode =='zh-cn' ){            
+   //            var newHref = oldHref.replace('www.minitab.com', 'www.minitab.com');
+   //            $anchor.attr('href', newHref);
+
+   //            hrefsChangedDebuggingPush(newHref, oldHref, "addLangToHrefs_www_support()");
+   //            }
+   //            else{
+   //            var newHref = oldHref.replace('www.minitab.com', 'www.minitab.com/' + langVals.localeCode);
+   //            $anchor.attr('href', newHref);
+
+   //            hrefsChangedDebuggingPush(newHref, oldHref, "addLangToHrefs_www_support()");
+
+   //            }
+   //         }
+   //      }
+   //   });
+   //}
+
+
+
+
+
+   function addLangToHrefs_wwwStartWithSlash() {
+      if (siteHosts.thisSite && siteHosts.thisSite.length > 0) {
+         var index = siteHosts.thisSite.toLowerCase().indexOf('localhost');
+         if (index >= 0) {
+            // ektron aliasing doesn't work in cassini so skipping anything localhost
+            return;
+         }
+      }
+
+      // www.minitab.com links - $wwwAnchors start with '/' so require '/en-us' prepended
+      var $wwwAnchors = $allAnchors.filter('[href^="/"]'); // note: href^= means href.startsWith(
+
+      $wwwAnchors.each(function (index, element) {
+         var $anchor = $(element);
+         var oldHref = $anchor.attr('href');
+         if (isWwwHrefOkToProcess(oldHref)) {
+            var slashPathLower = oldHref.toLowerCase();
+            if (localeCodeIsInSlashPathFront(slashPathLower) == false) {
+               var newHref = '/' + langVals.localeCode + oldHref;
+               $anchor.attr('href', newHref);
+
+               hrefsChangedDebuggingPush(newHref, oldHref, "addLangToHrefs_wwwStartWithSlash()");
+            }
+         }
+      });
+   }
+
+   function doEktronExternalLinksFix() {
+      $allAnchors.each(function (index, element) {
+         var $anchor = $(element);
+         var oldHref = $anchor.attr('href');
+         if (oldHref && oldHref.length > 0) {
+            // examples:
+            //
+            // Hovering over it (on the server) shows:
+            // "http://www.minitab.com/http:/it.minitab.com/..."
+            //
+            // Hovering over it (when running locally) shows:
+            // "http://localhost:17470/http:/it.minitab.com/..."
+            //
+            // View source shows it as:
+            // "/http:/it.minitab.com/..." or "/http:/localhost:17470/..."
+            var newHref = oldHref.replace('/http:/', 'http://');
+            if (newHref != oldHref) {
+               $anchor.attr('href', newHref);
+
+               hrefsChangedDebuggingPush(newHref, oldHref, "doEktronExternalLinksFix()");
+            }
+         }
+      });
+   }
+
+   // private functions - helpers (in more or less the order that they're used)
+   function getLocaleCodeFromPathFront(slashPathLower) {
+      var localeCode = '';
+
+      // lookin for the form: "/en-us" or "/en-us/" or "/en-us/whatever..."
+      for (localeId in localeIdLocaleCodeDict) {
+         var lc = localeIdLocaleCodeDict[localeId];
+         if (slashPathLower.indexOf(lc) == 1) {
+            localeCode = lc;
+            break;
+         }
+      }
+
+      return localeCode;
+   }
+
+   function setLangVals(localeCode, source) {
+      langVals.localeCode = localeCode;
+      langVals.localeId = getLocaleIdForLocaleCode(localeCode);
+      langVals.source = source + ' (client-side)';
+   }
+
+   function getLocaleCodeForLocaleId(localeId) {
+      var localeCode = 'en-us';
+
+      var localeCodeMaybe = localeIdLocaleCodeDict[localeId];
+      if (localeCodeMaybe && localeCodeMaybe.length == 5) {
+         localeCode = localeCodeMaybe;
+      }
+
+      return localeCode;
+   }
+
+   function getLocaleIdForLocaleCode(localeCode) {
+      var localeId = 1033;
+
+      for (langProp in localeIdLocaleCodeDict) {
+         if (localeIdLocaleCodeDict[langProp] == localeCode) {
+            localeId = langProp;
+            break;
+         }
+      }
+
+      return localeId;
+   }
+
+   function getThisUrlWithNewLocaleCode(newLocaleCode) {
+      var newUrl = '';
+
+      if (newLocaleCode && newLocaleCode.length == 5) {
+         if (newLocaleCode != langVals.localeCode) {
+            // eg: "/en-us" or "/en-us/" or "/en-us/whatever..." or "/whatever..."
+            var oldPath = window.location.pathname;
+
+            // construct newPath
+            var newPath = '';
+            if (langVals.localeCode && langVals.localeCode.length == 5) {
+               // eg: "/en-us" or "/en-us/" or "/en-us/whatever"
+               newPath = '/' + newLocaleCode + oldPath.substr(6);
+            } else {
+               // eg: "/" or "/whatever"
+               var newPath = '/' + newLocaleCode + oldPath;
+            }
+
+            // eg: "http://it.minitab.com/whatever?a=1&b=2" or "http://it.minitab.com/fr/whatever?a=1&b=2"
+            var oldUrl = window.location.href;
+            newUrl = oldUrl.replace(oldPath, newPath);
+
+            // new july 2014 - for search, change locale-code in q and gsc.q when it contains "site:"
+            var index = newUrl.indexOf('site%3A');
+            if (index > -1) {
+               if (langVals.localeCode && langVals.localeCode.length == 5) {
+                  var tempUrl = newUrl;
+                  // must do it twice because it's in q and in gsc.q
+                  newUrl = newUrl.replace(langVals.localeCode, newLocaleCode);
+                  newUrl = newUrl.replace(langVals.localeCode, newLocaleCode);
+                  //alert("MC.languageUtils.getThisUrlWithNewLocaleCode()\n\nURL has 'site:', so fixing\n\nBEFORE fix:\n'" + tempUrl + "'\n\nAFTER fix:\n'" + newUrl);
+               }
+            }
+         }
+      }
+
+      return newUrl;
+   }
+
+   function localeCodeIsInSlashPathFront(slashPathLower) {
+      var localeCodeIsInHref = false;
+
+      var localeCode = getLocaleCodeFromPathFront(slashPathLower);
+      if (localeCode && localeCode.length > 0) {
+         localeCodeIsInHref = true;
+      }
+
+      return localeCodeIsInHref;
+   }
+
+   function hrefsChangedDebuggingPush(newHref, oldHref, functionName) {
+      var msg = newHref;
+
+      if (oldHref && oldHref.length > 0) {
+         msg += "\n" + oldHref;
+      }
+      if (functionName && functionName.length > 0) {
+         msg += "\n" + functionName;
+      }
+      msg += "\n";
+
+      hrefsChangedDebugging.push(msg);
+   }
+
+   // public functions - test and debug
+   this.testViaAlerts = function () {
+      init();
+
+      if (MC.queryStringUtils.isTestViaAlerts() == false) {
+         return;
+      }
+
+      isTestViaAlerts = true;
+      if (!languageProcessingIsDone) {
+         return;
+      }
+
+      var newLine = '';
+      var msg = "Client-side, hrefs changed: '" + hrefsChangedDebugging.length + "'";
+
+      var $langDebugging = $('#langDebugging');
+      if ($langDebugging.length > 0) {
+         msg += "<br />";
+         for (var index in hrefsChangedDebugging) {
+            var hrefChanged = hrefsChangedDebugging[index];
+            while (hrefChanged.indexOf('\n') > -1) {
+               hrefChanged = hrefChanged.replace('\n', '<br />');
+            }
+            msg += "<br />" + hrefChanged;
+         }
+         $langDebugging.html(msg);
+      } else {
+         msg += "\n";
+         for (var index in hrefsChangedDebugging) {
+            var hrefChanged = hrefsChangedDebugging[index];
+            msg += "\n" + hrefChanged;
+         }
+         alert(msg);
+      }
+   }
+
+   // public functions
+   this.getLocaleCodeFromPath = function () {
+      if (!localeCodeFromPath || localeCodeFromPath.length == 0) {
+         setLangValsFromPath();
+      }
+      return localeCodeFromPath;
+   }
+
+   this.doLanguageProcessing = function (thisSite) {
+      siteHosts.thisSite = thisSite;
+      init();
+
+      // language cascade - note: this client-side processing is for the same for the three sites and is therefore
+      // different than the IT site's server-side cascade - compare and contrast with: Minitab.LanguageInfo
+      if (!langVals.source || langVals.source == '') {
+         setLangValsFromPath();
+      }
+      if (!langVals.source || langVals.source == '') {
+         setLangValsFromSmcCookie(); // minitab.com cookie
+      }
+      if (!langVals.source || langVals.source == '') {
+         setLangVals('en-us', 'default');
+      }
+
+      // Get the current value set in smc cookie.
+	  var currSmcLocaleCode = MC.cookieUtils.getSubCookieValue('smc', 'localeCode');
+	  //Set the cookie only if its not already set.
+	  if(currSmcLocaleCode=='')
+	  {
+		MC.cookieUtils.setSmcCookieSubNameSubValue('localeCode', langVals.localeCode);
+	  }
+	  
+	  
+      doLanguageProcessingForThisSite();
+
+      // in MC.languageUtils, this.testViaAlerts is only meaninful AFTER doLanguageProcessingForThisSite()
+      if (isTestViaAlerts) {
+         this.testViaAlerts();
+      }
+   };
+};
+
+// note*1:
+// The Location.replace()method replaces the current resource with the one at the provided URL.
+// The difference from the assign() method is that after using replace() the current page will
+// not be saved in session History, meaning the user won't be able to use the back button to navigate to it.
+// If the assignment can't happen because of a security violation, a DOMException of the SECURITY_ERROR type is thrown.' +
+// This happens if the origin of the script calling the method is different from the origin of
+// the page originally described by the Location object, mostly when the script is hosted on a different domain.
+
+// SIG // Begin signature block
+// SIG // MIIgRwYJKoZIhvcNAQcCoIIgODCCIDQCAQExDzANBglg
+// SIG // hkgBZQMEAgEFADB3BgorBgEEAYI3AgEEoGkwZzAyBgor
+// SIG // BgEEAYI3AgEeMCQCAQEEEBDgyQbOONQRoqMAEEvTUJAC
+// SIG // AQACAQACAQACAQACAQAwMTANBglghkgBZQMEAgEFAAQg
+// SIG // K09vGnMeBqT3A+nTfTNT/0iYXqhBtt1cpxTjTUHmRtag
+// SIG // gg7AMIIGsDCCBJigAwIBAgIQCK1AsmDSnEyfXs2pvZOu
+// SIG // 2TANBgkqhkiG9w0BAQwFADBiMQswCQYDVQQGEwJVUzEV
+// SIG // MBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
+// SIG // d3cuZGlnaWNlcnQuY29tMSEwHwYDVQQDExhEaWdpQ2Vy
+// SIG // dCBUcnVzdGVkIFJvb3QgRzQwHhcNMjEwNDI5MDAwMDAw
+// SIG // WhcNMzYwNDI4MjM1OTU5WjBpMQswCQYDVQQGEwJVUzEX
+// SIG // MBUGA1UEChMORGlnaUNlcnQsIEluYy4xQTA/BgNVBAMT
+// SIG // OERpZ2lDZXJ0IFRydXN0ZWQgRzQgQ29kZSBTaWduaW5n
+// SIG // IFJTQTQwOTYgU0hBMzg0IDIwMjEgQ0ExMIICIjANBgkq
+// SIG // hkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA1bQvQtAorXi3
+// SIG // XdU5WRuxiEL1M4zrPYGXcMW7xIUmMJ+kjmjYXPXrNCQH
+// SIG // 4UtP03hD9BfXHtr50tVnGlJPDqFX/IiZwZHMgQM+TXAk
+// SIG // ZLON4gh9NH1MgFcSa0OamfLFOx/y78tHWhOmTLMBICXz
+// SIG // ENOLsvsI8IrgnQnAZaf6mIBJNYc9URnokCF4RS6hnyzh
+// SIG // GMIazMXuk0lwQjKP+8bqHPNlaJGiTUyCEUhSaN4QvRRX
+// SIG // XegYE2XFf7JPhSxIpFaENdb5LpyqABXRN/4aBpTCfMjq
+// SIG // GzLmysL0p6MDDnSlrzm2q2AS4+jWufcx4dyt5Big2MEj
+// SIG // R0ezoQ9uo6ttmAaDG7dqZy3SvUQakhCBj7A7CdfHmzJa
+// SIG // wv9qYFSLScGT7eG0XOBv6yb5jNWy+TgQ5urOkfW+0/tv
+// SIG // k2E0XLyTRSiDNipmKF+wc86LJiUGsoPUXPYVGUztYuBe
+// SIG // M/Lo6OwKp7ADK5GyNnm+960IHnWmZcy740hQ83eRGv7b
+// SIG // UKJGyGFYmPV8AhY8gyitOYbs1LcNU9D4R+Z1MI3sMJN2
+// SIG // FKZbS110YU0/EpF23r9Yy3IQKUHw1cVtJnZoEUETWJrc
+// SIG // JisB9IlNWdt4z4FKPkBHX8mBUHOFECMhWWCKZFTBzCEa
+// SIG // 6DgZfGYczXg4RTCZT/9jT0y7qg0IU0F8WD1Hs/q27Iwy
+// SIG // CQLMbDwMVhECAwEAAaOCAVkwggFVMBIGA1UdEwEB/wQI
+// SIG // MAYBAf8CAQAwHQYDVR0OBBYEFGg34Ou2O/hfEYb7/mF7
+// SIG // CIhl9E5CMB8GA1UdIwQYMBaAFOzX44LScV1kTN8uZz/n
+// SIG // upiuHA9PMA4GA1UdDwEB/wQEAwIBhjATBgNVHSUEDDAK
+// SIG // BggrBgEFBQcDAzB3BggrBgEFBQcBAQRrMGkwJAYIKwYB
+// SIG // BQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBB
+// SIG // BggrBgEFBQcwAoY1aHR0cDovL2NhY2VydHMuZGlnaWNl
+// SIG // cnQuY29tL0RpZ2lDZXJ0VHJ1c3RlZFJvb3RHNC5jcnQw
+// SIG // QwYDVR0fBDwwOjA4oDagNIYyaHR0cDovL2NybDMuZGln
+// SIG // aWNlcnQuY29tL0RpZ2lDZXJ0VHJ1c3RlZFJvb3RHNC5j
+// SIG // cmwwHAYDVR0gBBUwEzAHBgVngQwBAzAIBgZngQwBBAEw
+// SIG // DQYJKoZIhvcNAQEMBQADggIBADojRD2NCHbuj7w6mdNW
+// SIG // 4AIapfhINPMstuZ0ZveUcrEAyq9sMCcTEp6QRJ9L/Z6j
+// SIG // fCbVN7w6XUhtldU/SfQnuxaBRVD9nL22heB2fjdxyyL3
+// SIG // WqqQz/WTauPrINHVUHmImoqKwba9oUgYftzYgBoRGRjN
+// SIG // YZmBVvbJ43bnxOQbX0P4PpT/djk9ntSZz0rdKOtfJqGV
+// SIG // WEjVGv7XJz/9kNF2ht0csGBc8w2o7uCJob054ThO2m67
+// SIG // Np375SFTWsPK6Wrxoj7bQ7gzyE84FJKZ9d3OVG3ZXQIU
+// SIG // H0AzfAPilbLCIXVzUstG2MQ0HKKlS43Nb3Y3LIU/Gs4m
+// SIG // 6Ri+kAewQ3+ViCCCcPDMyu/9KTVcH4k4Vfc3iosJocsL
+// SIG // 6TEa/y4ZXDlx4b6cpwoG1iZnt5LmTl/eeqxJzy6kdJKt
+// SIG // 2zyknIYf48FWGysj/4+16oh7cGvmoLr9Oj9FpsToFpFS
+// SIG // i0HASIRLlk2rREDjjfAVKM7t8RhWByovEMQMCGQ8M4+u
+// SIG // KIw8y4+ICw2/O/TOHnuO77Xry7fwdxPm5yg/rBKupS8i
+// SIG // bEH5glwVZsxsDsrFhsP2JjMMB0ug0wcCampAMEhLNKhR
+// SIG // ILutG4UI4lkNbcoFUCvqShyepf2gpx8GdOfy1lKQ/a+F
+// SIG // SCH5Vzu0nAPthkX0tGFuv2jiJmCG6sivqf6UHedjGzqG
+// SIG // VnhOMIIICDCCBfCgAwIBAgIQBzkFM164IT4ReX6SYe1C
+// SIG // OjANBgkqhkiG9w0BAQsFADBpMQswCQYDVQQGEwJVUzEX
+// SIG // MBUGA1UEChMORGlnaUNlcnQsIEluYy4xQTA/BgNVBAMT
+// SIG // OERpZ2lDZXJ0IFRydXN0ZWQgRzQgQ29kZSBTaWduaW5n
+// SIG // IFJTQTQwOTYgU0hBMzg0IDIwMjEgQ0ExMB4XDTIxMDky
+// SIG // MjAwMDAwMFoXDTIyMDkyMjIzNTk1OVowgd0xHTAbBgNV
+// SIG // BA8MFFByaXZhdGUgT3JnYW5pemF0aW9uMRMwEQYLKwYB
+// SIG // BAGCNzwCAQMTAlVTMRkwFwYLKwYBBAGCNzwCAQITCERl
+// SIG // bGF3YXJlMRAwDgYDVQQFEwc3MjYzMjAxMQswCQYDVQQG
+// SIG // EwJVUzEVMBMGA1UECBMMUGVubnN5bHZhbmlhMRYwFAYD
+// SIG // VQQHEw1TdGF0ZSBDb2xsZWdlMRUwEwYDVQQKEwxNaW5p
+// SIG // dGFiLCBMTEMxEDAOBgNVBAsTB01pbml0YWIxFTATBgNV
+// SIG // BAMTDE1pbml0YWIsIExMQzCCAiIwDQYJKoZIhvcNAQEB
+// SIG // BQADggIPADCCAgoCggIBAMmjL24N7ev0yJghcaspu8Yb
+// SIG // 0Jk58ItBp9J6QzGYCu8ylwHSv79S5UuXqdxOrfbW+EVP
+// SIG // VsfWSEXDDT6pp/X+IIKkOx7m+WFR6AIcZ7EAuM/OLwNT
+// SIG // vDWRw1HzsSitVAtaTo5gnp0JrCej92+mVOLLtOgqSXsE
+// SIG // PqIy7Xk9ViffKJQgXpTIDodzio4KaVhQVY/IAXNh0teC
+// SIG // BZ127pkwOjFsjGrUMaMOIgmqNhddF96tboIIudtmU/8R
+// SIG // yRecsU8y9RlmQe98TH/TC6AyDWuZo/msL5Mcd5pmkK/f
+// SIG // TCcfeKz7PudnQLY2ikZIzSiwZBs6fKwW42R3AMKrWjeT
+// SIG // v2/AQb8NDk72LIb9U/msofOao+UK+qLPugyLXsgvh112
+// SIG // p6+IYRYiCv8M6xhLf59tm37KMlZyY2+3QaVDJ1zR5pbT
+// SIG // DbhuLECtjX/JBfVAYTmXmP/dcY1QaGtKzx6xq6TfajPQ
+// SIG // /HQGYlz72wdZzr0E2wbcQf8kTUT67Lhi+II4pbLZiLwl
+// SIG // OC+F2wvowuG1kT5tR7GUD1BDd/j65N0hQLiNAnByH1RY
+// SIG // ykbnDLI3v4rWAqLqWqni74eaOVozfoSEr+Fz1GIUzYt/
+// SIG // o0AbDPkd/G5nMP8ALVXpnf9fOOp6ng0Yu4i1NVmwzRBE
+// SIG // 6KplpBbeO86c2kB25LYKMxQlVQ7/Dw92P+kZrpv57dbf
+// SIG // AgMBAAGjggI1MIICMTAfBgNVHSMEGDAWgBRoN+Drtjv4
+// SIG // XxGG+/5hewiIZfROQjAdBgNVHQ4EFgQUAePNOkzE+lWk
+// SIG // pzPd9YcSkD3aBJgwLgYDVR0RBCcwJaAjBggrBgEFBQcI
+// SIG // A6AXMBUME1VTLURFTEFXQVJFLTcyNjMyMDEwDgYDVR0P
+// SIG // AQH/BAQDAgeAMBMGA1UdJQQMMAoGCCsGAQUFBwMDMIG1
+// SIG // BgNVHR8Ega0wgaowU6BRoE+GTWh0dHA6Ly9jcmwzLmRp
+// SIG // Z2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRHNENvZGVT
+// SIG // aWduaW5nUlNBNDA5NlNIQTM4NDIwMjFDQTEuY3JsMFOg
+// SIG // UaBPhk1odHRwOi8vY3JsNC5kaWdpY2VydC5jb20vRGln
+// SIG // aUNlcnRUcnVzdGVkRzRDb2RlU2lnbmluZ1JTQTQwOTZT
+// SIG // SEEzODQyMDIxQ0ExLmNybDA9BgNVHSAENjA0MDIGBWeB
+// SIG // DAEDMCkwJwYIKwYBBQUHAgEWG2h0dHA6Ly93d3cuZGln
+// SIG // aWNlcnQuY29tL0NQUzCBlAYIKwYBBQUHAQEEgYcwgYQw
+// SIG // JAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0
+// SIG // LmNvbTBcBggrBgEFBQcwAoZQaHR0cDovL2NhY2VydHMu
+// SIG // ZGlnaWNlcnQuY29tL0RpZ2lDZXJ0VHJ1c3RlZEc0Q29k
+// SIG // ZVNpZ25pbmdSU0E0MDk2U0hBMzg0MjAyMUNBMS5jcnQw
+// SIG // DAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOCAgEA
+// SIG // qZzNbc34WUIxPNgoFO/gjJHREvufUCwYJVgeEVaVCzjh
+// SIG // glVxis9P9OdvMJl8LODhBf8vGTNzzLsP8G/jRpk8nSqi
+// SIG // ZEQ7uv2KZ28W+WIY0cK/ADJyi3lxE0BRVtJLe/nx5mI4
+// SIG // SVfw401pCcnxkceBI/4iFETu6eaU+SJoc0gXGfyMMikR
+// SIG // qygKhtIsDl2zx9ZrW9bA/SQ+jqASzl2vbXISQsoh8D3Z
+// SIG // nOT3Z4jCwpQUEAS1uv2EvvniUgRJ6DBWbqGS+P172uRa
+// SIG // SDO2TNN36woqPmr5TlWgU7KwQ+7DV5T07Qur5fLZ4Hpb
+// SIG // Qc71uC8aukxsutKsTBzXW2jx6A+3DulXBx+vvL5gHRtW
+// SIG // CykT3wDuUkywMFeEkucXJpuOgfVdhnWVDe7SJHAgmwBE
+// SIG // R5LVhCqP/PSmIjWQwCTFHTSUrF01ezhrGJxU6prUYcn2
+// SIG // K24JEsD41GbbctMTebBflHTPePt0JIjjv3COwGBS7N4X
+// SIG // 70BBK51FDuvJggTMax7gzUUWJdGJkaVT+HVSpTuRhxuu
+// SIG // uQYAEqG0LEpVx10bkhXsQ1+My31RJST5LlkAdvVpKzLz
+// SIG // O3Y8ao7j9URPta7xLU/v3wZZfXlj748Rr2OZk48KaIwO
+// SIG // ngY9UxOB2KoE+YE8WmwKUXHxp+s8F/yruMLUvLLXxDeH
+// SIG // lEVavgTfuH53bOfmjtV4lQExghDfMIIQ2wIBATB9MGkx
+// SIG // CzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2VydCwg
+// SIG // SW5jLjFBMD8GA1UEAxM4RGlnaUNlcnQgVHJ1c3RlZCBH
+// SIG // NCBDb2RlIFNpZ25pbmcgUlNBNDA5NiBTSEEzODQgMjAy
+// SIG // MSBDQTECEAc5BTNeuCE+EXl+kmHtQjowDQYJYIZIAWUD
+// SIG // BAIBBQCggbIwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcC
+// SIG // AQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUw
+// SIG // LwYJKoZIhvcNAQkEMSIEIAT7ulrzkY24xiHqKHDHDuaG
+// SIG // vUG5GoCLkJ/+bo4Gv56oMEYGCisGAQQBgjcCAQwxODA2
+// SIG // oBqAGABNAGkAbgBpAHQAYQBiACAAMQA5AC4AMaEYgBZo
+// SIG // dHRwOi8vd3d3Lm1pbml0YWIuY29tMA0GCSqGSIb3DQEB
+// SIG // AQUABIICAIRQkCi5XpX58pGsP3dwO5Fjgyqqi4a4PuET
+// SIG // QPhBSFIkgY9JzTbhS7vfCE8KPz0bDOHciCbzGaC83Zkq
+// SIG // 5zImAufjB+5zVkFgtGyR6XgWVaF46cGOhSZ9/UVCG7Wn
+// SIG // CoqWdR7oDqaGON5j2czMtALAmiTg88TdkwgsVesEeGbx
+// SIG // t8BOORR9R6dXcfO7g/2XNED5ake2tkugr5nEdBxU+TqX
+// SIG // hFLLtDa9t5ION5elRHPSeL8j3CeN/4Y+veeOPFQ4K5pR
+// SIG // ntiYfxxcfNfPx7jA4reTXTP2+4PbC3r7kiOTx5P4y01c
+// SIG // n6iRPNrB9st5eyHlWjzHQbYJ4+zJU5sdJJcMob96SqzP
+// SIG // 2aAU/Tf0xjibBXWQ2UXte4P2tRftElePzt9jxJ3cvc1S
+// SIG // XHQBEI1AxxT+o/SXW+MEMGMBHoMQqDtKDHQCVp/QR3tE
+// SIG // iQiJX+VhV1wkftmrMmOI+ad4wFYUXa8lbYgKEZmhfeDw
+// SIG // ksdYk7tmY6CFnRCakCkfZsUbVJf2VYpf0Gp36wQVFzLd
+// SIG // 25+ZwflbtGMIDaPmiQaFHrB9y5hEBUY3+zgOgiOqQxYp
+// SIG // HC7TvcwHCOXmxUOFci908KawxS6No4lLRnYvww9/sfvv
+// SIG // MW9E0eWmgqTHANpOocAN2azVsJarFHiOBXoggEys5sIG
+// SIG // td90mrzX/FmmeTbfN8elJ9fCD2S7VFRQoYINfjCCDXoG
+// SIG // CisGAQQBgjcDAwExgg1qMIINZgYJKoZIhvcNAQcCoIIN
+// SIG // VzCCDVMCAQMxDzANBglghkgBZQMEAgEFADB4BgsqhkiG
+// SIG // 9w0BCRABBKBpBGcwZQIBAQYJYIZIAYb9bAcBMDEwDQYJ
+// SIG // YIZIAWUDBAIBBQAEINAw1ClSqloOblzoZdwleE6sUIMF
+// SIG // RUxNX77cgElTIkWxAhEAh9q+WoHXKBtyaU3w3NDWDhgP
+// SIG // MjAyMTEwMTMxNzEwNDdaoIIKNzCCBP4wggPmoAMCAQIC
+// SIG // EA1CSuC+Ooj/YEAhzhQA8N0wDQYJKoZIhvcNAQELBQAw
+// SIG // cjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0
+// SIG // IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEx
+// SIG // MC8GA1UEAxMoRGlnaUNlcnQgU0hBMiBBc3N1cmVkIElE
+// SIG // IFRpbWVzdGFtcGluZyBDQTAeFw0yMTAxMDEwMDAwMDBa
+// SIG // Fw0zMTAxMDYwMDAwMDBaMEgxCzAJBgNVBAYTAlVTMRcw
+// SIG // FQYDVQQKEw5EaWdpQ2VydCwgSW5jLjEgMB4GA1UEAxMX
+// SIG // RGlnaUNlcnQgVGltZXN0YW1wIDIwMjEwggEiMA0GCSqG
+// SIG // SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDC5mGEZ8WK9Q0I
+// SIG // pEXKY2tR1zoRQr0KdXVNlLQMULUmEP4dyG+RawyW5xpc
+// SIG // SO9E5b+bYc0VkWJauP9nC5xj/TZqgfop+N0rcIXeAhjz
+// SIG // eG28ffnHbQk9vmp2h+mKvfiEXR52yeTGdnY6U9HR01o2
+// SIG // j8aj4S8bOrdh1nPsTm0zinxdRS1LsVDmQTo3VobckyON
+// SIG // 91Al6GTm3dOPL1e1hyDrDo4s1SPa9E14RuMDgzEpSlwM
+// SIG // MYpKjIjF9zBa+RSvFV9sQ0kJ/SYjU/aNY+gaq1uxHTDC
+// SIG // m2mCtNv8VlS8H6GHq756WwogL0sJyZWnjbL61mOLTqVy
+// SIG // HO6fegFz+BnW/g1JhL0BAgMBAAGjggG4MIIBtDAOBgNV
+// SIG // HQ8BAf8EBAMCB4AwDAYDVR0TAQH/BAIwADAWBgNVHSUB
+// SIG // Af8EDDAKBggrBgEFBQcDCDBBBgNVHSAEOjA4MDYGCWCG
+// SIG // SAGG/WwHATApMCcGCCsGAQUFBwIBFhtodHRwOi8vd3d3
+// SIG // LmRpZ2ljZXJ0LmNvbS9DUFMwHwYDVR0jBBgwFoAU9Lbh
+// SIG // IB3+Ka7S5GGlsqIlssgXNW4wHQYDVR0OBBYEFDZEho6k
+// SIG // urBmvrwoLR1ENt3janq8MHEGA1UdHwRqMGgwMqAwoC6G
+// SIG // LGh0dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9zaGEyLWFz
+// SIG // c3VyZWQtdHMuY3JsMDKgMKAuhixodHRwOi8vY3JsNC5k
+// SIG // aWdpY2VydC5jb20vc2hhMi1hc3N1cmVkLXRzLmNybDCB
+// SIG // hQYIKwYBBQUHAQEEeTB3MCQGCCsGAQUFBzABhhhodHRw
+// SIG // Oi8vb2NzcC5kaWdpY2VydC5jb20wTwYIKwYBBQUHMAKG
+// SIG // Q2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdp
+// SIG // Q2VydFNIQTJBc3N1cmVkSURUaW1lc3RhbXBpbmdDQS5j
+// SIG // cnQwDQYJKoZIhvcNAQELBQADggEBAEgc3LXpmiO85xrn
+// SIG // IA6OZ0b9QnJRdAojR6OrktIlxHBZvhSg5SeBpU0UFRkH
+// SIG // efDRBMOG2Tu9/kQCZk3taaQP9rhwz2Lo9VFKeHk2eie3
+// SIG // 8+dSn5On7UOee+e03UEiifuHokYDTvz0/rdkd2NfI1Jp
+// SIG // g4L6GlPtkMyNoRdzDfTzZTlwS/Oc1np72gy8PTLQG8v1
+// SIG // Yfx1CAB2vIEO+MDhXM/EEXLnG2RJ2CKadRVC9S0yOIHa
+// SIG // 9GCiurRS+1zgYSQlT7LfySmoc0NR2r1j1h9bm/cuG08T
+// SIG // HfdKDXF+l7f0P4TrweOjSaH6zqe/Vs+6WXZhiV9+p7SO
+// SIG // Z3j5NpjhyyjaW4emii8wggUxMIIEGaADAgECAhAKoSXW
+// SIG // 1jIbfkHkBdo2l8IVMA0GCSqGSIb3DQEBCwUAMGUxCzAJ
+// SIG // BgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMx
+// SIG // GTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
+// SIG // BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAe
+// SIG // Fw0xNjAxMDcxMjAwMDBaFw0zMTAxMDcxMjAwMDBaMHIx
+// SIG // CzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJ
+// SIG // bmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xMTAv
+// SIG // BgNVBAMTKERpZ2lDZXJ0IFNIQTIgQXNzdXJlZCBJRCBU
+// SIG // aW1lc3RhbXBpbmcgQ0EwggEiMA0GCSqGSIb3DQEBAQUA
+// SIG // A4IBDwAwggEKAoIBAQC90DLuS82Pf92puoKZxTlUKFe2
+// SIG // I0rEDgdFM1EQfdD5fU1ofue2oPSNs4jkl79jIZCYvxO8
+// SIG // V9PD4X4I1moUADj3Lh477sym9jJZ/l9lP+Cb6+NGRwYa
+// SIG // VX4LJ37AovWg4N4iPw7/fpX786O6Ij4YrBHk8JkDbTuF
+// SIG // fAnT7l3ImgtU46gJcWvgzyIQD3XPcXJOCq3fQDpct1Hh
+// SIG // oXkUxk0kIzBdvOw8YGqsLwfM/fDqR9mIUF79Zm5WYScp
+// SIG // iYRR5oLnRlD9lCosp+R1PrqYD4R/nzEU1q3V8mTLex4F
+// SIG // 0IQZchfxFwbvPc3WTe8GQv2iUypPhR3EHTyvz9qsEPXd
+// SIG // rKzpVv+TAgMBAAGjggHOMIIByjAdBgNVHQ4EFgQU9Lbh
+// SIG // IB3+Ka7S5GGlsqIlssgXNW4wHwYDVR0jBBgwFoAUReui
+// SIG // r/SSy4IxLVGLp6chnfNtyA8wEgYDVR0TAQH/BAgwBgEB
+// SIG // /wIBADAOBgNVHQ8BAf8EBAMCAYYwEwYDVR0lBAwwCgYI
+// SIG // KwYBBQUHAwgweQYIKwYBBQUHAQEEbTBrMCQGCCsGAQUF
+// SIG // BzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYI
+// SIG // KwYBBQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0
+// SIG // LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RDQS5jcnQw
+// SIG // gYEGA1UdHwR6MHgwOqA4oDaGNGh0dHA6Ly9jcmw0LmRp
+// SIG // Z2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
+// SIG // QS5jcmwwOqA4oDaGNGh0dHA6Ly9jcmwzLmRpZ2ljZXJ0
+// SIG // LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RDQS5jcmww
+// SIG // UAYDVR0gBEkwRzA4BgpghkgBhv1sAAIEMCowKAYIKwYB
+// SIG // BQUHAgEWHGh0dHBzOi8vd3d3LmRpZ2ljZXJ0LmNvbS9D
+// SIG // UFMwCwYJYIZIAYb9bAcBMA0GCSqGSIb3DQEBCwUAA4IB
+// SIG // AQBxlRLpUYdWac3v3dp8qmN6s3jPBjdAhO9LhL/KzwMC
+// SIG // /cWnww4gQiyvd/MrHwwhWiq3BTQdaq6Z+CeiZr8JqmDf
+// SIG // dqQ6kw/4stHYfBli6F6CJR7Euhx7LCHi1lssFDVDBGiy
+// SIG // 23UC4HLHmNY8ZOUfSBAYX4k4YU1iRiSHY4yRUiyvKYnl
+// SIG // eB/WCxSlgNcSR3CzddWThZN+tpJn+1Nhiaj1a5bA9Fhp
+// SIG // DXzIAbG5KHW3mWOFIoxhynmUfln8jA/jb7UBJrZspe6H
+// SIG // USHkWGCbugwtK22ixH67xCUrRwIIfEmuE7bhfEJCKMYY
+// SIG // Vs9BNLZmXbZ0e/VWMyIvIjayS6JKldj1po5SMYIChjCC
+// SIG // AoICAQEwgYYwcjELMAkGA1UEBhMCVVMxFTATBgNVBAoT
+// SIG // DERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2lj
+// SIG // ZXJ0LmNvbTExMC8GA1UEAxMoRGlnaUNlcnQgU0hBMiBB
+// SIG // c3N1cmVkIElEIFRpbWVzdGFtcGluZyBDQQIQDUJK4L46
+// SIG // iP9gQCHOFADw3TANBglghkgBZQMEAgEFAKCB0TAaBgkq
+// SIG // hkiG9w0BCQMxDQYLKoZIhvcNAQkQAQQwHAYJKoZIhvcN
+// SIG // AQkFMQ8XDTIxMTAxMzE3MTA0N1owKwYLKoZIhvcNAQkQ
+// SIG // AgwxHDAaMBgwFgQU4deCqOGRvu9ryhaRtaq0lKYkm/Mw
+// SIG // LwYJKoZIhvcNAQkEMSIEIGOUV792HZC2vT8mjj3h6ADj
+// SIG // 7nqlcCfVNkptYiMjzVIuMDcGCyqGSIb3DQEJEAIvMSgw
+// SIG // JjAkMCIEILMQkAa8CtmDB5FXKeBEA0Fcg+MpK2FPJpZM
+// SIG // jTVx7PWpMA0GCSqGSIb3DQEBAQUABIIBADAKa9wCL7Hg
+// SIG // SWbbfjoGe2EmyrW1qbkZmU8ls+OMXi65NnfI8uYp/7Ba
+// SIG // VpMvCfJBfHcbHEz6fKe/QkhzEaPV4gvgsOlO+jUPjTmc
+// SIG // CLzPHfbDMh8OYf8X6L6h6mTIsK9idleal/a1mg8QW1RR
+// SIG // 0GWUbRmifQAekJGblF86RdwPDa2iYPW2vMcsC6pY0mYJ
+// SIG // 62AlO5XJijK0e/zKv7XD906p8Z8bvGGZE+4gVd2Tj/G/
+// SIG // TttJEh+Kik5lMbJHbqmI4c8U6Fu/GOktO1PyEkBDGxqn
+// SIG // PlgXL7b2eImZOsJMrFoF8f/oP0VrfsAfYG2sNlqEz6g1
+// SIG // txK02i4qKPGn/Vfn6PY+/Pg=
+// SIG // End signature block

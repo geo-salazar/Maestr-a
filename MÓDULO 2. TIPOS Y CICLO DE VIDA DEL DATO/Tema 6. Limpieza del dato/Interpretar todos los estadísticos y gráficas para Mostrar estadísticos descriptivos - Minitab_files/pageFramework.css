@@ -1,0 +1,2734 @@
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,800);
+@import url(https://fonts.googleapis.com/css?family=Work+Sans:200,400,600,800);
+
+
+
+
+html, button, body.support
+{
+    font-family: 'Open Sans', 'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+    color: #333; /* optiimal for screen reading */
+    font-size: 1rem;
+}
+
+
+body
+{
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+
+}
+
+body.support
+{
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    background-color: #333;
+}
+
+body.support.pageclass\.error, body.support.pageclass\.defaulterror
+{
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    background-color: white;
+}
+
+img.image.product-feature-icon
+{
+    max-width: 100%;
+    display: inline;
+    margin-top: 0;
+    margin-bottom: 0;
+
+}
+
+.no-flexbox img.image.product-feature-icon
+{
+    max-width: 100%;
+    display: inline;
+    margin-top: 0;
+    margin-bottom: 0;
+    border: none;
+
+}
+
+
+.flexbox.no-flexboxlegacy.no-webgl img.image.product-feature-icon
+{
+    max-width: 100%;
+    display: inline;
+    margin-top: 0;
+    margin-bottom: 0;
+    border: none;
+
+}
+.clearing
+{
+    clear: both;
+}
+
+.noDisplay
+{
+    display: none;
+}
+
+.hide
+{
+    display: none;
+}
+
+
+/* form styles */
+
+
+input.mtb-search
+{
+    padding: 12px;
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    background-image: url(../img/icons/searchico.png);
+    background-repeat: no-repeat;
+    background-position: 99% 50%;
+    background-size: 24px;
+    border: 1px solid white;
+    border-radius: 2px;
+}
+
+
+
+.support .alert h6{
+    display: inline;
+    text-transform: none;
+    font-weight: 800;
+    
+}
+
+.support .alert h6::after
+{
+    content: ": ";
+}
+.support .alert {
+    border-left: none;
+     margin: 0;
+    padding-left: 0;
+
+}
+
+.support .alert h6 {
+    display: inline;
+    font-size: inherit;
+    margin: 0;
+    padding: 0;
+}
+.support .alert p.notetext{
+    font-size: inherit;
+   display: inline;
+    padding-left: 2px;
+}
+
+.support p
+{
+    font-size: inherit;
+}
+
+h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child {
+    margin-top: 0;
+}
+
+/* link styles */
+.support a:hover
+{
+    text-decoration: underline;
+}
+
+a.mtb-button
+{
+    display: inline-block;
+    margin: 16px 0;
+    margin-bottom: 0;
+    padding: 1em 2em;
+    font-size: small;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    text-align: center;
+    border-radius: 3px;
+}
+
+.no-flexboxlegacy .mtb-ctaButton a.mtb-button#cookie
+{
+    display: table-cell;
+    margin: 16px 0;
+    margin-bottom: 0;
+    padding: 1em 2em;
+    font-size: small;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    text-align: center;
+    border-radius: 3px;
+    width: 115px;
+}
+       a.mtb-button.mtb-themeBlue
+    {
+        background-color: #4c8fdd !important;
+        color: #eee !important;
+      
+    }
+
+    a.mtb-button.mtb-themeBlue:hover
+    {
+        background-color: #4eaff8 !important;
+        color: #eee !important;
+	  text-decoration: none;
+    }
+
+
+    a.mtb-button.mtb-themeLightGray
+    {
+        background-color: #ddd;
+        color: #333;
+    }
+
+    a.mtb-button.mtb-themeWhite
+    {
+        background-color: #fff;
+        color: #333;
+    }
+
+    a.mtb-button.mtb-themeDarkGray
+    {
+        background-color: #333;
+        color: #eee;
+    }
+
+
+.support a
+{
+    text-decoration: none;
+}
+
+/*  video CMP styles */
+.video__notice {
+	display: block;
+    border: 1px solid #E5E5E5;
+    background: #E5E5E5;
+    padding: 25%;
+    border-radius: 3vw 4vw 8vw 2vw;
+    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.3);
+    font-size: 1.6rem;
+}
+
+  #otp-toggle {
+            	cursor: pointer;
+    }
+
+
+/* external notification styles */
+
+div#speedbump {
+  
+   background: #eee;
+    bottom: 10;
+    display: none;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 9999;
+    /*padding: 40px;*/
+    right: 0;
+    bottom: 0;
+    background-color: #eee;
+    
+    
+    }
+    
+    
+ div#speedbumpon {
+  
+   background: #eee;
+    display: block;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 9999;
+    padding: 40px;
+    right: 0;
+    bottom: 0;
+    background-color: #eee;
+    
+    
+    }   
+
+
+#speedbump h4.modal-title {
+  text-align: center;
+  text-transform: uppercase;
+  color: #0083ca;
+  font-size:2.5em;
+	margin: 20px;
+	font-weight: 600;
+  
+}
+.modal-body {
+    text-align: center;
+}
+
+
+
+#clickUrl {
+word-break: break-word;
+font: inherit;
+}
+
+
+button.btn-modal:hover {
+  cursor: pointer;
+}
+
+button.btn-modal.btn-continue { 
+  margin: 2% 2%;
+
+}
+button.btn-modal.btn-close {
+ margin: 2% 2%;
+ 
+}
+.modal-header .close {
+  font-size: 3.5em;
+}
+
+.modal-content {
+width: 75%;
+    padding: 50px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+   background-image: linear-gradient(131.83deg, #ffffff 0%, #f5f5f5 99.21%);
+   	/*background-image: url(/etc.clientlibs/minitab/clientlibs/clientlib-site/resources/images/_graphFullTB.png);*/
+    border-radius: 16px;
+    background-repeat:no-repeat;
+    background-size: cover;
+    min-height: 480px;
+    
+    
+}
+
+
+
+.text-center {
+margin: auto;
+    text-align: center;
+}
+
+.modal-header {
+    
+    text-align: center;
+}
+
+
+.ext-note {
+    max-width: 200px;
+    text-align: center;
+    margin: 20px auto;
+    
+}
+.mtb-ext-note {
+font-size: 2em;
+text-align:center;
+padding-bottom: 15px;
+}
+.mtb-ext-redirect {
+text-align:center;
+font-size: 2em;
+}
+
+
+@media (max-width: 991px) {
+	.ext-note {
+		 margin: 50px auto 20px;
+    	 max-width: 150px;
+		
+	}
+	.modal-content {
+		background-image: linear-gradient(131.83deg, #ffffff 0%, #f5f5f5 99.21%);
+    	/*top: 65%;*/
+    	padding: 20px;
+    	font-size: 9px;
+    	overflow: auto;
+		
+	}
+	
+	button.btn-modal.btn-close  {
+		margin: 2% 0;
+		padding: 5px 15px;
+	}
+	
+	button.btn-modal.btn-continue{
+		margin: 2% 0;
+		padding: 5px 15px;
+	}
+	
+}
+
+
+/* typo styles */
+
+  a.mtb-social
+    {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        background-size: 32px;
+        background-position: center center;
+        background-repeat: no-repeat;
+    }
+
+    a.mtb-social.mtb-facebook
+    {
+        background-image: url(../img/icons/facebook2.svg);
+    }
+
+        a.mtb-social.mtb-twitter
+    {
+        background-image: url(../img/icons/twitter.svg);
+    }
+
+        a.mtb-social.mtb-linkedIn
+    {
+        background-image: url(../img/icons/linkedin1.svg);
+    }
+
+
+
+.mtb-container.mtb-themeAlertYellow {
+    background-color: #fcf2c1;
+    color: #333;
+    z-index: 999;
+    padding: 1em 0;
+}
+
+.mtb-keep, .mtb-keep a
+{
+     display: inline-block;
+    font-size: small;
+}
+
+.no-flexboxlegacy .mtb-ctaRow {
+  
+    display: table;
+}
+
+.mtb-ctaRow {
+    display: flex;
+    -ms-flex-direction: row;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    align-items: center;
+    -ms-flex-wrap: wrap;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+}
+
+    .mtb-toaster {
+        box-shadow: 2px 2px 16px #111;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      
+        -moz-transition: ease-in-out 1s;
+        -o-transition: ease-in-out 1s;
+        -webkit-transition: ease-in-out 1s;
+        transition: ease-in-out 1s;
+        border-top: 1px solid #999;
+        padding: 1em 0;
+      
+    }
+
+        .mtb-toaster.mtb-toast {
+            bottom: -100%;
+            -moz-transition: ease-in-out 1s;
+            -o-transition: ease-in-out 1s;
+            -webkit-transition: ease-in-out 1s;
+            transition: ease-in-out 1s;
+        }
+
+
+    #cookie
+    {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .mtb-toasterButton {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+    padding: 0 1em;
+
+}
+
+
+.mtb-ctaRow .mtb-ctaButton {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+    padding: 0 1em;
+}
+
+
+.no-flexboxlegacy .mtb-divButton {
+   margin: 1em 0; 
+   cursor: pointer;
+   display: inline;
+}
+.mtb-divButton {
+   margin: 1em 0; 
+   cursor: pointer;
+}
+.no-flexboxlegacy .mtb-ctaRow .mtb-ctaCopy {
+    display: table-cell;
+    width: auto;
+    padding: 0 1em;
+   
+}
+
+.mtb-ctaRow .mtb-ctaCopy {
+/*    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 30em;*/
+    flex: 10 10 15em;
+    padding: 0 1em;
+}
+
+
+
+.titlebar {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 2em;
+    flex-wrap: wrap;
+}
+
+.titlebar h1.topicHeader {
+    flex: 1 1 auto;
+    margin-bottom: 0;
+    margin-right: 2em;
+    font-weight: 200;
+}
+
+
+.titlebar h1.title {
+    flex: 1 1 auto;
+    margin-bottom: 0;
+    margin-right: 2em;
+    font-weight: 200;
+}
+.promo {
+    flex: 0 1 auto;
+    font-size: small;
+    margin-bottom: 3px;
+    padding-top: 1em;
+}
+
+.mtb-heroTitle
+{
+    font-size: 3rem;
+    font-weight: 200;
+}
+
+.mtb-heroTitle.mtb-large
+{
+    font-size: 4rem;
+    font-weight: 200;
+    line-height: 1.1;
+}
+
+.mtb-panelTitle {
+    font-size: 2rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.mtb-themeLightBlue .mtb-panelTitle
+{
+    color: white;
+}
+
+.mtb-panelTitle.mtb-large
+{
+    font-size: 2.5rem;
+    font-weight: 200;
+}
+
+.mtb-panelTitle.mtb-small
+{
+    font-size: 1.5rem;
+    font-weight: 400;
+}
+
+
+a.mtb-panelTitle
+{
+    display: block;
+    cursor: pointer;
+}
+
+a.mtb-panelTitle:hover
+{
+    text-decoration: none;
+}
+
+
+
+.mtb-featureTitle
+{
+    font-size: medium;
+    font-weight: 600;
+    margin-top: 2em;
+}
+
+.mtb-featureTitle.mtb-large {
+    font-weight: 400;
+    font-size: 1.4rem;
+}
+
+    .mtb-featureTitle.mtb-x-large
+    {
+        font-weight: 400;
+        font-size: 1.4rem;
+    }
+
+    .mtb-featureTitle.mtb-x-large.mtb-withIcon
+    {
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+    }
+
+        .mtb-featureTitle.mtb-x-large.mtb-withIcon .mtb-headerIcon
+        {
+            flex: 0 0 2em;
+            margin-right: .4em;
+            display: flex;
+            align-items: center;
+        }
+
+            .mtb-featureTitle.mtb-x-large.mtb-withIcon .mtb-headerIcon img
+            {
+                width: 2em;
+                height: 2em;
+            }
+
+        .mtb-featureTitle.mtb-x-large.mtb-withIcon .mtb-headerText
+        {
+            flex: 1 1 auto;
+        }
+
+.mtb-titleCap
+{
+    font-size: small;
+    display: block;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+
+/* Alignment */
+
+.mtb-center
+{
+    text-align: center;
+}
+
+.mtb-left
+{
+    text-align: left;
+}
+.mtb-right
+{
+    text-align: right;
+}
+
+.mtb-verticalCenter
+{
+    display: flex;
+    align-items: center;
+}
+
+
+
+    ul.mtb-simpleList
+    {
+        font-size: small;
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+        ul.mtb-simpleList.mtb-horizontal
+        {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+       .no-flexbox ul.mtb-simpleList.mtb-horizontal,  .flexbox.no-flexboxlegacy.no-webgl ul.mtb-simpleList.mtb-horizontal
+        {
+            display: table;
+           /* flex-wrap: wrap;*/
+        }
+
+
+/*       .flexbox.no-flexboxlegacy ul.mtb-simpleList.mtb-horizontal
+        {
+            display: table;
+           /\* flex-wrap: wrap;*\/
+        }*/
+            ul.mtb-simpleList.mtb-horizontal li
+            {
+                margin-right: 2em;
+            }
+            
+            .no-flexbox ul.mtb-simpleList.mtb-horizontal li, .flexbox.no-flexboxlegacy.no-webgl ul.mtb-simpleList.mtb-horizontal li
+            {
+                margin-right: 2em;
+                padding-right: 2em;
+                display: table-cell;
+            }
+            
+/*             .flexbox.no-flexboxlegacy ul.mtb-simpleList.mtb-horizontal li
+            {
+                margin-right: 2em;
+                padding-right: 2em;
+                display: table-cell;
+            }*/
+
+    ul.mtb-termList
+    {
+        list-style-type:none;
+        padding: 0;
+    }
+
+        ul.mtb-termList .mtb-term
+        {
+            font-weight: 600;
+        }
+
+            ul.mtb-termList .mtb-term:after
+            {
+                content: ":";
+            }
+
+
+
+
+
+/* feature set */
+
+
+/* mtb- */
+
+
+.mtb-featureSet
+{
+
+    display: -ms-flex;
+    display: -moz-box;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+
+    /*-ms-flex-wrap: nowrap;
+    -webkit-flex-wrap: nowrap;
+    flex-wrap: nowrap;*/
+
+    -webkit-justify-content: center;
+    justify-content: center;
+
+    margin: 0 -2rem;
+}
+
+
+.no-flexbox .mtb-featureSet
+{
+    display: table;
+
+
+    -webkit-justify-content: center;
+    justify-content: center;
+
+    margin: 0 0;
+}
+
+
+
+.mtb-featureSet .mtb-feature
+{
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 16em;
+    max-width: 100%;
+    margin: 2rem 2rem 0rem 2rem;
+}
+
+.flexbox.no-flexboxlegacy.no-webgl .mtb-featureSet
+{
+    display: table;
+
+
+    -webkit-justify-content: center;
+    justify-content: center;
+
+    margin: 0 0;
+}
+.no-flexbox .mtb-featureSet .mtb-feature
+{
+    /*flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 16em;*/
+    max-width: 100%;
+    display: table-cell;
+   /* margin: 2rem 2rem 0rem 2rem;*/
+   
+}
+
+
+.flexbox.no-flexboxlegacy.no-webgl .mtb-featureSet .mtb-feature
+{
+    /*flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 16em;*/
+    max-width: 100%;
+    display: table-cell;
+   /* margin: 2rem 2rem 0rem 2rem;*/
+   
+}
+
+    .mtb-featureSet.mtb-noShrink .mtb-feature
+    {
+        flex-shrink: 0;
+    }
+
+        .mtb-featureSet.mtb-noGrow .mtb-feature
+    {
+        flex-grow: 0;
+    }
+
+    .mtb-featureSet.mtb-wrap
+    {
+        -ms-flex-wrap: wrap;
+        -webkit-flex-wrap: wrap;
+        flex-wrap: wrap;
+    }
+
+    .mtb-featureSet.mtb-justify-left
+    {
+        justify-content: flex-start;
+    }
+
+    .mtb-featureSet.mtb-justify-center
+    {
+        justify-content: center;
+    }
+
+    .mtb-featureSet.mtb-justify-right
+    {
+        justify-content: flex-end;
+    }
+
+    .mtb-featureSet.mtb-justify-full
+    {
+        justify-content: space-between;
+    }
+
+
+
+    .mtb-featureSet.mtb-centeredOnSmallScreen
+    {
+    }
+
+
+
+    
+/* build in variable feature widths */
+
+    .mtb-featureSet.mtb-x-narrow .mtb-feature
+    {
+        flex-basis: 8em
+    }
+
+    .mtb-featureSet.mtb-narrow .mtb-feature
+    {
+        flex-basis: 12em
+    }
+
+    .mtb-featureSet.mtb-wide .mtb-feature
+    {
+        flex-basis: 20em
+    }
+
+    .mtb-featureSet.mtb-x-wide .mtb-feature
+    {
+        flex-basis: 24em
+    }
+
+
+    /* feature-level modifiers */
+
+
+
+
+
+.mtb-feature.mtb-noShrink
+{
+    flex-shrink: 0;
+}
+
+.mtb-feature.mtb-noGrow
+{
+    flex-grow: 0;
+}
+
+
+.mtb-featureSet a.mtb-feature
+{
+    color:  #333;
+    border: 1px solid transparent;
+    padding: 16px;
+    margin: 0 2em;
+}
+
+.mtb-featureSet a:hover.mtb-feature
+{
+    text-decoration: none;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-shadow: 4px 4px 4px #eee;
+    background-color: #fff;
+}
+
+
+
+@media screen and (max-width: 40em)
+{
+    a.mtb-feature
+    {
+        margin: 0 !important;
+        padding: 24px 0;
+    }
+
+    .mtb-featureSet
+    {
+        flex-direction: column;
+    }
+
+    .mtb-featureSet .mtb-feature
+    {
+       flex-grow: 1 !important;
+       flex-shrink: 1 !important;
+       flex-basis: auto !important;
+       margin: 2rem 2rem 0rem 2rem;
+
+    }
+
+    .mtb-featureSet.mtb-wrap
+    {
+    }
+
+    .mtb-featureSet.mtb-wrap .mtb-feature
+    {
+        flex: 1 1 auto;
+    }
+
+    .mtb-featureSet.mtb-centeredOnSmallScreen
+    {
+        text-align: center;
+    }
+
+}
+
+/* *********************** */
+/* TYPOGRAPHICAL MODIFIERS */
+/* *********************** */
+
+
+
+/* Font Size */
+
+.mtb-x-small
+{
+    font-size: x-small;
+    /* context dependent */
+}
+
+.mtb-small
+{
+    font-size: small;
+    /* context dependent */
+}
+
+.mtb-medium
+{
+    font-size: medium;
+}
+
+.mtb-large
+{
+    font-size: large;
+    /* context dependent */
+}
+
+.mtb-x-large
+{
+    font-size: x-large;
+}
+
+
+/* Font Weight */
+
+.mtb-light
+{
+    font-weight: 200;
+}
+
+.mtb-normal
+{
+    font-weight: 400;
+}
+
+.mtb-semibold
+{
+    font-weight: 600;
+}
+
+.mtb-bold
+{
+    font-weight: 800;
+}
+
+
+/* Font Style */
+.mtb-italic
+{
+    font-style: italic;
+}
+
+/* Padding */
+
+.mtb-noPadding
+{
+    padding: 0;
+}
+
+.mtb-noTopPadding
+{
+    padding-top: 0;
+}
+
+.mtb-noBottomPadding
+{
+    padding-bottom: 0;
+}
+
+.mtb-noRightPadding
+{
+    padding-right: 0;
+}
+
+.mtb-noLeftPadding
+{
+    padding-left: 0;
+}
+
+.mtb-narrowPadding
+{
+    /* context dependent */
+}
+
+.mtb-narrowTopPadding
+{
+    /* context dependent */
+}
+
+.mtb-narrowBottomPadding
+{
+    /* context dependent */
+}
+
+.mtb-narrowLeftPadding
+{
+    /* context dependent */
+}
+
+.mtb-narrowRightPadding
+{
+    /* context dependent */
+}
+
+.mtb-widePadding
+{
+    /* context dependent */
+}
+
+.mtb-wideTopPadding
+{
+    /* context dependent */
+}
+
+.mtb-wideBottomPadding
+{
+    /* context dependent */
+}
+
+.mtb-wideLeftPadding
+{
+    /* context dependent */
+}
+
+.mtb-wideRightPadding
+{
+    /* context dependent */
+}
+
+
+
+/* Margin */
+
+.mtb-noMargin
+{
+    margin: 0 !important;
+}
+
+.mtb-noTopMargin
+{
+    margin-top: 0 !important;
+}
+
+.mtb-noBottomMargin
+{
+    margin-bottom: 0 !important;
+}
+
+.mtb-noRightMargin
+{
+    margin-right: 0 !important;
+}
+
+.mtb-noLeftMargin
+{
+    margin-left: 0 !important;
+}
+
+.mtb-narrowMargin
+{
+    /* context dependent */
+}
+
+.mtb-narrowTopMargin
+{
+    /* context dependent */
+}
+
+.mtb-narrowBottomMargin
+{
+    /* context dependent */
+}
+
+.mtb-narrowLeftMargin
+{
+    /* context dependent */
+}
+
+.mtb-narrowRightMargin
+{
+    /* context dependent */
+}
+
+.mtb-wideMargin
+{
+    /* context dependent */
+}
+
+.mtb-wideTopMargin
+{
+    margin-top: 2em;
+    /* context dependent */
+}
+
+.mtb-wideBottomMargin
+{
+    /* context dependent */
+}
+
+.mtb-wideLeftMargin
+{
+    /* context dependent */
+}
+
+.mtb-wideRightMargin
+{
+    /* context dependent */
+}
+
+.mtb-x-wideMargin
+{
+    /* context dependent */
+}
+
+.mtb-x-wideTopMargin
+{
+    margin-top: 2em;
+    /* context dependent */
+}
+
+.mtb-x-wideBottomMargin
+{
+    /* context dependent */
+}
+
+.mtb-x-wideLeftMargin
+{
+    /* context dependent */
+}
+
+.mtb-x-wideRightMargin
+{
+    /* context dependent */
+}
+
+
+/* misc */
+
+.mtb-noBreak
+{
+    white-space: nowrap;
+}
+
+.mtb-displayBlock
+{
+    display: block;
+}
+
+.mtb-displayInline
+{
+    display: inline;
+}
+
+
+/* container styles */
+
+.mtb-container {
+    padding: 64px 0;
+}
+
+
+/* ROW */
+/* ROW */
+
+.mtb-container .mtb-row
+{
+    width: 100%;
+    max-width: 60rem;
+    margin: 0 auto;
+    position: relative;
+}
+
+    .mtb-container.mtb-x-narrowFrame .mtb-row
+    {
+        max-width: 40rem;
+    }
+
+    .mtb-container.mtb-narrowFrame .mtb-row
+    {
+        max-width: 50rem;
+    }
+
+    .mtb-container.mtb-wideFrame .mtb-row
+    {
+        max-width: 70rem;
+    }
+
+    .mtb-container.mtb-x-wideFrame .mtb-row
+    {
+        max-width: 80rem;
+    }
+
+    .mtb-container.mtb-xx-wideFrame .mtb-row
+    {
+        max-width: 100rem;
+    }
+
+    .mtb-container.mtb-screen-wideFrame .mtb-row
+    {
+        max-width: none;
+    }
+
+    /* INNER */
+
+    .mtb-container .mtb-row .mtb-inner
+    {
+        margin: 0 32px;
+    }
+
+@media screen and (max-width: 30em)
+{
+
+    .mtb-container .mtb-row .mtb-inner
+    {
+         margin: 0 24px;
+    }
+
+}
+
+
+
+
+/* PHOTO HERO */
+
+.mtb-container.mtb-hero
+{
+    display: flex;
+    align-items: center;
+    background-color: #222;
+    min-height: 16em;
+    height: 16em;
+}
+
+    .mtb-container.mtb-hero .mtb-row
+    {
+        -ms-flex: 1 1 100px;
+        flex: 1 1 auto;
+    }
+
+    .mtb-container.mtb-hero.mtb-tall
+    {
+        min-height: 18em;
+        height: 18em;
+    }
+
+        .mtb-container.mtb-hero.mtb-x-tall
+    {
+        min-height: 20em;
+        height: 20em;
+    }
+
+    .mtb-container.mtb-hero.mtb-short
+    {
+        min-height: 14em;
+        height: 14em;
+    }
+
+        .mtb-container.mtb-hero.mtb-x-short
+    {
+        min-height: 12em;
+        height: 12em;
+    }
+
+            .mtb-container.mtb-hero.mtb-xx-short
+    {
+        min-height: 8em;
+        height: 8em;
+    }
+
+@media screen and (max-width: 30em)
+{
+    .mtb-container.mtb-hero
+    {
+        height: auto;
+    }
+}
+
+
+
+
+.mtb-container.mtb-hero.mtb-dark
+{
+    color: #fff;
+}
+
+    .mtb-container.mtb-hero.dark .mtb-textColor-blue
+    {
+        color: #4eaff8;
+    }
+
+
+
+/* Panel Themes */
+
+.mtb-container
+{
+    background-color: #fff;
+}
+
+.mtb-container.mtb-themeLightBlue
+{
+    background-color: #4c8fdc;
+    color: #fff;
+}
+
+    .mtb-container.mtb-themeLightBlue a
+    {
+        color: #fff;
+    }
+
+.mtb-container.mtb-themeDarkGray
+{
+    background-color: #333;
+    color: #fff;
+}
+
+    .mtb-container.mtb-themeDarkGray a
+{
+    color: #5aadff;
+}
+
+.mtb-container.mtb-themeBlack
+{
+    background-color: #171e25;
+    color: #fff;
+}
+
+.mtb-container.mtb-themeLightGray
+{
+    background-color: #eee;
+    color: #333;
+}
+
+.mtb-container.mtb-themeOffWhite
+{
+    background-color: #fafafa;
+    color: #333;
+}
+
+    .mtb-container.mtb-borderBottom
+    {
+        border-bottom: 1px solid #ddd;
+    }
+
+
+/* HEADER STYLES*/
+
+
+.mtb-corpMark
+{
+    width: 116px;
+    height: 37px;
+
+    background-image: url(../img/MinitabCorpLogo.png);
+}
+
+.no-flexbox .mtb-corpMark, .flexbox.no-flexboxlegacy.no-webgl .mtb-corpMark
+{
+    width: 116px;
+    height: 37px;
+    margin-top: 0.5em;
+    display: inline-block;
+    background-image: url(../img/MinitabCorpLogo.png);
+}
+
+.mtb-container.mtb-globalHeader
+{
+    position: relative;
+    padding: 0;
+    background-color: #fff;
+    color: #444;
+    height: 64px;
+    z-index: 99;
+}
+
+    .mtb-container.mtb-globalHeader .mtb-row
+    {
+        height: 100%;
+        max-width: none;
+    }
+
+        .mtb-container.mtb-globalHeader .mtb-row .mtb-inner
+        {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            position: relative;
+
+            margin-right: 0; /* override to push search button to screen edge */
+            margin-left: 16px;
+        }
+        
+        
+        .no-flexbox .mtb-container.mtb-globalHeader .mtb-row .mtb-inner, .flexbox.no-flexboxlegacy.no-webgl .no-flexbox .mtb-container.mtb-globalHeader .mtb-row .mtb-inner
+        {
+            height: 100%;
+            /*display: table;*/
+            align-items: center;
+            position: relative;
+
+            margin-right: 0; /* override to push search button to screen edge */
+            margin-left: 16px;
+        }
+
+
+
+                select.mtb-textSelector
+                {
+                    background: transparent;
+                    border: none;
+                    font-family: 'Open Sans', 'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;
+	                -webkit-font-smoothing: antialiased;
+                    color: inherit;
+                    padding: 0;
+                    -webkit-appearance: listbox;
+                    -moz-appearance: none;
+                    background-image: url(../img/arrow_white.svg);
+                    background-repeat: no-repeat;
+                    background-position: 95% 50%;
+                    background-size: 12px;
+                    padding-right: 12px;
+                    
+                    cursor: pointer;
+                }
+
+                    select.mtb-textSelector option
+                    
+                    {
+                        color: #444;
+                       /* background-color: white;*/
+                    }
+                    
+                    
+              @-moz-document url-prefix() {
+                select.mtb-textSelector {padding-right:29px;  }
+             }
+             
+            select.mtb-textSelector::-ms-expand {
+             /*    display: none;*/
+                 }
+
+            
+/* menu button for small screens */
+ 
+.mtb-container.mtb-globalHeader .mtb-globalNav.mtb-smallscreen
+{
+    display: none;
+}
+
+
+  .mtb-globalHeader .mtb-globalNav
+    {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 0px; 
+        height: 64px;
+    }
+    
+    
+    .no-flexbox .mtb-globalHeader .mtb-globalNav
+    {
+        position: absolute;
+        top: -25%;
+      /*  transform: translateY(-50%);*/
+        right: 0px; 
+        height: 64px;
+    }
+
+
+.flexbox.no-flexboxlegacy.no-webgl .mtb-globalHeader .mtb-globalNav
+    {
+        position: absolute;
+        top: 20%;
+      transform: translateY(-50%);
+        right: 0px; 
+        height: 64px;
+    }
+        .mtb-globalHeader .mtb-globalNav ul
+        {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+            display: flex;
+        }
+        
+        
+       .no-flexbox .mtb-globalHeader .mtb-globalNav ul
+        {
+            margin: 0;
+            margin-top: -10px;
+            padding-bottom: 0;
+            list-style-type: none;
+            display: table;
+           
+        }
+        
+         
+
+            .mtb-globalHeader .mtb-globalNav ul li
+            {
+                display: inline-block;
+                position: relative;
+                height: 100%;
+            }
+            
+
+
+                .mtb-globalHeader .mtb-globalNav ul li a
+                {
+                    display: inline-block;
+                    padding: 23px 16px;
+                    color: #444;
+                    font-size: 0.8rem;
+                    font-weight: 400;
+                    letter-spacing: .02em;
+                    border-left: 0px solid #333;
+                    text-align: center;
+                    text-transform: uppercase;
+                    text-decoration: none;
+                    outline: none;
+                }
+
+
+                    .mtb-globalHeader .mtb-globalNav ul li a.mtb-searchButton
+                    {
+                        background-image: url(../img/icons/magnifying-glass32Dark.svg);
+                        background-size: 16px;
+                        background-repeat: no-repeat;
+                        background-position: center center;
+                        background-color: #eee;
+                        border-radius: 3px;
+                        position: relative; 
+                        top: 0px;
+                        padding: 0px;
+                        margin-left: 8px;
+
+                        width: 64px;
+                        height: 64px;
+                    }
+                    
+                    
+                    .no-flexbox .mtb-globalHeader .mtb-globalNav ul li a.mtb-searchButton
+                    {
+                       
+                        top: 26px;
+                   
+                    }
+                    
+                    .flexbox.no-flexboxlegacy.no-webgl .mtb-globalHeader .mtb-globalNav ul li a.mtb-searchButton
+                    {
+                       
+                        top: 18px;
+                   
+                    }
+                    
+  /*                  .flexbox.no-flexboxlegacy .mtb-globalHeader .mtb-globalNav ul li a.mtb-searchButton
+                    {
+                         top: 10px;
+                    }
+                    */
+
+        .mtb-globalHeader .mtb-globalNav .mtb-dropdownBox
+        {
+            position: relative;
+       
+        } 
+
+        .mtb-globalHeader .mtb-globalNav li.mtb-dropdown
+        {
+            position: relative;
+            padding-right: 16px;
+        }
+
+            .mtb-globalHeader .mtb-globalNav li.mtb-dropdown .mtb-icon
+            {
+                width: 12px;
+                height: 12px;
+                position: absolute;
+                right: 12px;
+                top: 52%;
+                transform: translateY(-50%);
+                background-image: url(../img/arrow_gray.svg);
+                background-repeat: no-repeat;
+                background-size: 12px;
+                background-position: center center;
+            }
+            
+            .no-flexbox .mtb-globalHeader .mtb-globalNav li.mtb-dropdown .mtb-icon
+            {
+                width: 14px;
+                height: 12px;
+                position: absolute;
+                right: 12px;
+                top: 40%;
+               /* transform: translateY(-50%);*/
+                background-image: url(../img/arrow_gray.svg);
+                background-repeat: no-repeat;
+                background-size: 12px;
+                background-position: center center;
+            }
+
+            .mtb-globalHeader .mtb-globalNav li.mtb-dropdown .mtb-icon svg
+            {
+                stroke: #ddd;
+            }
+
+
+        .mtb-globalHeader .mtb-globalNav li.mtb-dropdown ul
+        {
+            display: block;
+            position: absolute;
+            top: 90%;
+            left: 50%;
+            transform: translateX(-25%);
+            background: #fff;
+            border: 1px solid #ccc;
+            width: auto;
+            margin-top: -1px;
+            padding: 0;
+
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        }
+
+            .mtb-globalHeader .mtb-globalNav .mtb-dropdownBox.mtb-hide
+            {
+                display: none;
+            }
+
+            .mtb-globalHeader .mtb-globalNav li.mtb-dropdown ul li
+            {
+                display: block;
+                white-space: nowrap;
+            }
+
+                .mtb-globalHeader .mtb-globalNav li.mtb-dropdown ul li a
+                {
+                    border-bottom: 0px solid #ddd;
+                    display: block;
+                    padding: 12px 24px;
+                    font-size: 0.8rem;
+                    text-align: left;
+                    text-transform: none;
+                    border-top: 1px solid #ddd;
+                }
+
+                    .mtb-globalHeader .mtb-globalNav li.mtb-dropdown ul li a:hover
+                    {
+                        background-color: #4c8fdc;
+                        color: #eee;
+                    }
+
+                .mtb-globalHeader .mtb-globalNav li.mtb-dropdown ul li:last-child a
+                {
+                    border-bottom: 0px solid #999;
+                }
+
+    .mtb-globalHeader a:hover
+    {
+        cursor: pointer;
+    }
+
+.mtb-globalHeader .mtb-menuIcon
+{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 16px;
+    width: 24px;
+    display: none;
+}
+
+
+    .mtb-globalHeader .mtb-globalNav.smallscreen
+    {
+        display: none;
+    }
+
+
+.mtb-globalHeader .mtb-globalSection
+{
+    margin-left: .5em;
+}
+
+.no-flexbox .mtb-globalHeader .mtb-globalSection, .flexbox.no-flexboxlegacy.no-webgl .mtb-globalHeader .mtb-globalSection
+{
+display: inline-block;
+top: 1em;
+position: absolute;
+
+
+}
+
+.no-flexbox.no-flexboxlegacy .mtb-globalHeader .mtb-globalSection
+{
+/*  margin-top: -30px;
+    margin-left: 8em;*/
+}
+
+    .mtb-globalHeader .mtb-globalSection a
+    {
+        color: #444;
+        text-decoration: none;
+    }
+
+        .mtb-globalHeader .mtb-globalSection a:hover
+        {
+            text-decoration: none;
+        }
+
+    .mtb-globalHeader .mtb-globalSection:before
+    {
+        content: "|";
+        margin-right: .5em;
+    }
+
+@media screen and (max-width: 50em)
+{
+    .mtb-globalHeader .mtb-globalNav
+    {
+        display: none;
+    }
+
+    .mtb-globalHeader .mtb-globalNav.smallscreen
+    {
+        display: block;
+        position: absolute;
+        top:0px;
+        right:0;
+    }
+}
+
+.container
+{
+   
+}
+
+.container.narrow
+{
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.container.x-narrow
+{
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.container.xx-narrow
+{
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+    .container.wideTopMargin
+    {
+        margin-top: 64px;
+    }
+
+.back-to-top {
+
+            width: 64px;
+            height: 64px;
+            border-radius: 32px;
+            background-image: url(../img/direction356.png);
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-color: #4c8fdc;
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+            z-index: 100;
+            display: none;
+
+}
+
+
+
+iframe.nav
+{
+border: none;  
+height: 100%;
+width: 20em;
+overflow-y: auto;
+
+    
+}
+
+
+
+
+
+.top-bar
+{
+    position: relative;
+    top: 0;
+    left: 0px;
+    width: 100%;
+    height: 56px;
+}
+
+.top-bar.minitab-express
+{
+    background-color: #004d72;
+}
+
+
+
+
+.top-bar.qeystone
+{
+    background-color: #cc1631;
+}
+
+.top-bar.companion
+{
+	background-color: #d9811b;
+}
+
+.top-bar.quality-companion
+{
+    background-color: #d9811b;
+}
+
+.top-bar.minitab-workspace
+{
+    background-color: #d9811b;
+}
+
+.top-bar.datasets
+{
+    background-color: #0075b4;
+   
+}
+
+.top-bar.devize
+{
+    background-color: #008f8b;
+   
+}
+
+
+.top-bar.quality-trainer
+{
+    background-color: #a3177c;
+   
+}
+
+.top-bar.installation
+{
+    background-color: #0075b4;
+}
+.top-bar .product, .top-bar .product *
+{
+    color: #FFFFFF;
+}
+
+.pageclass\.error .top-bar, .pageclass\.defaulterror .top-bar {
+    
+       background-color: transparent;
+}
+.top-bar .inner
+{
+    position: relative;
+    margin:0 auto;
+    padding:6px 60px;
+    /*max-width:880px;*/
+}
+
+.top-bar .burger
+{
+    position: relative;
+    left: 0px;
+
+    
+    height: 24px;
+    
+    background-image:url(../img/hamburgerWhite.png);
+    background-repeat:no-repeat;
+    background-position: 12px 10px;
+    background-size:12px;
+    
+    color: #FFFFFF;
+    
+    margin-top: 12px;
+    margin-right: 16px;
+    padding: 4px 16px 4px 32px;
+    
+    cursor: pointer;
+    
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.top-bar .burger .menu-text
+{
+    font-size: 12px;
+    font-weight: 400;
+    position: relative;
+    top: -3px;
+    color: #FFFFFF;
+}
+
+.top-bar .product
+{
+    /*position: relative;*/
+    left: 0px;
+/*   padding-top: 12px;*/
+
+}
+
+/*.top-bar .productName::before
+{
+   content: url(../img/Minitab17.svg);
+/\*top: 2px;
+position: relative;
+height: 30px;
+ width: 30px;
+ padding-top: 5px; 
+ line-height: 0;  *\/ 
+}*/
+
+img.logo-svg
+{
+top: 4px;
+position: relative;
+height: 27px;
+width: 27px;
+padding-right: 5px; 
+ line-height: 0;   
+ margin: 0;
+ border: none;
+    
+}
+
+
+
+
+
+
+.top-bar .product .productName
+{
+    padding-top: 10px;
+    font-weight: 400;
+    font-size: 20px;
+
+    
+   
+}
+
+
+.top-bar .product .productName a
+{
+    font-weight: 400;
+    font-size: 20px;
+/*    background-image: url(../img/Minitab17.svg);
+    background-repeat: no-repeat;
+    background-size: 30px 30px;
+    background-position: left;
+/\*    margin-top: 20px;*\/
+    padding-left: 30px;*/
+
+}
+
+.productName a:hover, .productName a:active
+{
+    text-decoration: none;
+
+}
+
+.installation .top-bar .product, .datasets .top-bar .product
+{
+    left: 0px;
+   padding-top: 4px;
+
+}
+
+.installation .top-bar .product .productName, .datasets .top-bar .product .productName
+{
+    font-weight: 400;
+    font-size: 20px;
+}
+
+.quality-companion.top-bar .product .productName
+{
+    font-weight: 400;
+    font-size: 20px;
+}
+
+
+
+.companion.top-bar .product .productName a
+{
+    font-weight: 400;
+    font-size: 20px;
+}
+
+.companion.top-bar .product .productName
+{
+    font-weight: 400;
+    font-size: 20px;
+}
+
+
+.minitab-workspace.top-bar .product .productName, .minitab-workspace.top-bar .product .productName a
+{
+    font-weight: 400;
+    font-size: 20px;
+}
+
+
+.quality-companion.top-bar .product .productName a
+{
+    font-weight: 400;
+    font-size: 20px;
+}
+
+.installation .top-bar .product .productName a, .datasets .top-bar .product .productName a
+{
+    font-weight: 400;
+    font-size: 20px;
+}
+
+.top-bar .product .productName strong
+{
+    font-weight: 600;
+    font-size: 20px;
+}
+
+
+.top-bar .search
+{
+
+    position: absolute;
+    right: 40px;
+    top: 10px;
+    margin: 0 0px;
+    vertical-align: middle;
+    border: 1px solid #AAAAAA;
+    border-radius: 1px;
+    outline: none;
+    background-color: white;
+
+}
+
+
+
+.top-bar .search:active
+{
+     border: 1px solid #457bd5;
+}
+
+#submitQuery {
+ /*background-color: #5994f2;*/
+ background-color: white;
+ border: none;
+  vertical-align: middle;
+  cursor: pointer;
+height: 33px;
+width: 33px;
+float:right;
+padding-left: 0;
+/*  padding-left: 10px;*/
+/* float: left;*/
+
+/* background-image: -webkit-linear-gradient(top,#4d90fe,#4787ed);*/
+
+}
+
+img.glass
+{
+    padding-left: 6px;
+}
+
+
+
+#submitQuery:hover {
+  /*  background-color: #4681df;*/
+   background-color: white;
+    border-bottom: none !important;
+}
+
+#submitQuery:focus {
+    outline: 0;
+}
+
+/*#queryString
+{
+/\*    border: none;
+    padding: 6px 8px;
+    margin: 0;
+    vertical-align: middle;
+    font-size: 13px;
+     min-width: 200px;
+/\*    min-width: 80%;*\/
+    height: 100%;
+    font-style: italic;*\/
+}
+
+
+
+
+
+#queryString:focus
+{
+    outline: 0;
+}*/
+
+
+
+.page-body
+{
+    position: static;
+
+}
+
+
+.footerContainer
+{
+    
+    position: relative;
+    top: 32px;
+    padding: 32px 0;
+    padding-bottom: 12em;
+}
+
+.footerContainer .inner
+{
+    margin: 0 auto;
+    padding: 60px 0 0 0;
+    max-width: 800px;
+    position: relative;
+}
+
+.footerContainer .minitabSites
+{
+    text-align: center;
+    padding-top: 24px;
+    border-top: 1px dotted #999;
+}
+
+.footerContainer .minitabSites ul {
+    display: inline-block;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.footerContainer .minitabSites ul li {
+display: inline-block;
+}
+
+.footerContainer .minitabSites ul li:after {
+content: "\25CF";
+font-size: 12px;
+color: #cccccc;
+}
+
+.footerContainer .minitabSites ul li.first a {
+padding-left: 0;
+}
+
+.footerContainer .minitabSites ul li a {
+font-size: 14px;
+padding: 0 16px 0 16px;
+cursor: pointer;
+color: #666;
+}
+
+.footerContainer .minitabSites ul li.last:after
+{
+    content: none;
+}
+
+.footerContainer .copyAndLang
+{
+    position: relative;
+    margin-top: 16px;
+    text-align: center;
+}
+
+.footerContainer .copyright
+{
+    display: inline-block;
+    font-size: 12px;
+    color: #999999;
+}
+
+.footerContainer .langSelector select {
+    
+    margin-top: 24px;
+    padding: 8px;
+    min-width: 180px;
+    background-color: #ddd;
+    border: 1px solid #808384;
+    border-radius: 3px;
+    background: #f1f1f1;
+    background: -moz-linear-gradient(top, #f1f1f1 0%, #e9e9e9 3%, #dddddd 45%, #dcdcdc 85%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f1f1f1), color-stop(3%,#e9e9e9), color-stop(45%,#dddddd), color-stop(85%,#dcdcdc));
+    background: -webkit-linear-gradient(top, #f1f1f1 0%,#e9e9e9 3%,#dddddd 45%,#dcdcdc 85%);
+    background: -o-linear-gradient(top, #f1f1f1 0%,#e9e9e9 3%,#dddddd 45%,#dcdcdc 85%);
+    background: -ms-linear-gradient(top, #f1f1f1 0%,#e9e9e9 3%,#dddddd 45%,#dcdcdc 85%);
+    background: linear-gradient(to bottom, #f1f1f1 0%,#e9e9e9 3%,#dddddd 45%,#dcdcdc 85%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f1f1f1', endColorstr='#dcdcdc',GradientType=0 );
+}
+
+.pageContainer.mainBody
+{
+    padding-top: 0;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+    transition: 0.2s ease-in-out
+}
+
+
+.offCanvasShow .pageContainer.mainBody {
+    left: 20em;
+    transition: 0.2s ease-in-out;
+}
+
+
+.pageContainer.offCanvasNav
+{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: -20em;
+    width: 20em;
+    background: #333;
+    color: #eee;
+    z-index: 999;
+    transition: 0.2s ease-in-out;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.offCanvasShow .pageContainer.offCanvasNav
+{
+    left: 0;
+    transition: 0.2s ease-in-out
+}
+
+
+        .offCanvasShow.noTransition .pageContainer.offCanvasNav
+        {
+            transition: none !important;
+        }
+
+        .topicContainer
+        {
+            margin-top: 64px;
+        }
+        .content-frame-alt.topicContainer
+        {
+            margin-top: 0;
+	    background-color: white;
+        }
+
+        .topicContainer .frame
+        {
+            width: 784px;
+            max-width: 100%;
+
+        }
+
+
+@media screen and (min-width: 70em)
+{
+
+    /*.pageContainer.offCanvasNav
+    {
+        top: 64px;
+        border-top: 1px solid #666;
+    }*/
+
+    .offCanvasShow .pageContainer.mainBody
+    {
+        left: 0em;
+        transition: 0.2s ease-in-out;
+    }
+
+    .offCanvasShow.noTransition .pageContainer.mainBody
+    {
+        transition: none;
+    }
+
+    .pageContainer.mainBody .productHeader
+    {
+        position: relative;
+        left: 0;
+        transition: 0.2s ease-in-out
+    }
+
+    .offCanvasShow .pageContainer.mainBody .productHeader
+    {
+        position: relative;
+        left: 20em;
+        transition: 0.2s ease-in-out;
+    }
+
+    .offCanvasShow.noTransition .pageContainer.mainBody .productHeader
+    {
+        transition: none;
+    }
+
+    .pageContainer.mainBody .topicContainer, .pageContainer.mainBody .helpSearchBar
+    {
+        padding-left: 0;
+        transition: 0.2s ease-in-out
+    }
+
+        .offCanvasShow .pageContainer.mainBody .topicContainer, .offCanvasShow .pageContainer.mainBody .helpSearchBar
+        {
+            padding-left: 20em;
+            transition: 0.2s ease-in-out
+        }
+
+        .offCanvasShow.noTransition .pageContainer.mainBody .topicContainer, .offCanvasShow.noTransition .pageContainer.mainBody .helpSearchBar
+        {
+            transition: none;
+        }
+
+}
+
+
+.next 
+{
+    
+padding-bottom: 10px;    
+}
+
+
+.frame
+{
+    width: 100%;
+    max-width: 1140px;
+    margin: 0 auto;
+    position: relative;
+}
+
+    .frame > .inner
+    {
+        padding: 0 32px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    
+    .error .frame > .inner
+    {
+        padding: 0 32px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+.pageContainer.globalHeader
+{
+    z-index: 99;
+}
+
+.pageContainer.mainBody
+{
+    padding-top: 0;
+    position: absolute;
+    left: 0;
+    width: 100%;
+
+    z-index: 1;
+    transition: 0.2s ease-in-out
+}
+
+.pageContainer.globalFooter
+{
+    /* temp */
+
+    min-height: 64px;
+    background-color: #333;
+
+}
+
+.pageContainer.offCanvasNav
+{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: -20em;
+    width: 20em;
+    background: #333;
+    z-index: 999;
+    transition: 0.2s ease-in-out;
+    overflow-y: hidden;
+    height: 100%;
+
+}
+
+.offCanvasShow .pageContainer.offCanvasNav
+{
+    right: 0;
+    transition: 0.2s ease-in-out
+}
+
+
+/*.offCanvasShow .pageContainer.mainBody
+{
+    left: -20em;
+    transition: 0.2s ease-in-out
+}*/
+
+@media screen and (max-width: 30em)
+{
+
+/*    .pageContainer.offCanvasNav
+    {
+        right: -80%;
+        width: 80%;
+    }
+
+    .offCanvasShow .pageContainer.mainBody
+    {
+        left: -80%;
+    }*/
+}
+
+
+
+.mtb-container.mtb-utilityFooter
+{
+    background-color: #333;
+    color: #ddd;
+    padding: 24px 0;
+    border: none;
+    padding-bottom: 12em;
+}
+
+    .mtb-utilityFooter .mtb-row
+    {
+        max-width: none;
+    }
+
+.mtb-utilityFooterFlex
+{
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: space-between
+}
+
+
+.no-flexbox .mtb-utilityFooterFlex, .flexbox.no-flexboxlegacy.no-webgl .mtb-utilityFooterFlex
+{
+    display: table;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: space-between
+}
+
+
+/*.flexbox.no-flexboxlegacy .mtb-utilityFooterFlex
+{
+    display: table;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: space-between
+}*/
+
+    .mtb-utilityFooterFlex .mtb-footerLinks
+    {
+        flex: 1 1 75%;
+    }
+    
+    .no-flexbox .mtb-utilityFooterFlex .mtb-footerLinks, .flexbox.no-flexboxlegacy.no-webgl .mtb-utilityFooterFlex .mtb-footerLinks
+    {
+        /*flex: 1 1 75%;*/
+        display: block;
+    }
+    
+/*        .flexbox.no-flexboxlegacy .mtb-utilityFooterFlex .mtb-footerLinks
+    {
+        /\*flex: 1 1 75%;*\/
+        display: block;
+    }*/
+
+        .mtb-utilityFooterFlex .mtb-footerLinks ul
+        {
+            margin: 0;
+            min-height: 32px;
+            margin: 8px 0;
+        }
+
+            .mtb-utilityFooterFlex .mtb-footerLinks ul li
+            {
+
+            }
+
+        .mtb-utilityFooterFlex .mtb-footerLinks ul li a
+        {
+            font-size: 1.15rem;
+            font-weight: 400;
+            color: #aaa;
+        }
+
+            .mtb-utilityFooterFlex .mtb-footerLinks ul li a:hover
+            {
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+
+    .mtb-utilityFooterFlex .mtb-socialIcons
+    {
+        flex: 0 1 105px;
+        margin: 8px 0;
+        min-width: 105px;
+    }
+
+
+.no-flexbox .mtb-utilityFooterFlex .mtb-socialIcons,  .flexbox.no-flexboxlegacy.no-webgl .mtb-utilityFooterFlex .mtb-socialIcons
+    {
+        /*flex: 0 1 105px;*/
+        display: table;
+        margin: 8px 0;
+        min-width: 105px;
+    }
+
+
+
+        .mtb-utilityFooterFlex .mtb-copyright
+        {
+            flex: 1 1 50%;
+            padding: 8px 32px 8px 0;
+            font-size: .75rem;
+            color: #aaa;
+
+            display: flex;
+            align-items: center;
+            min-width: 16em;
+        }
+        
+        
+        .no-flexbox .mtb-utilityFooterFlex .mtb-copyright,  .flexbox.no-flexboxlegacy.no-webgl .mtb-utilityFooterFlex .mtb-copyright
+        {
+            /*flex: 1 1 50%;*/
+            padding: 8px 32px 8px 0;
+            font-size: .75rem;
+            color: #aaa;
+
+            /*display: flex;*/
+           /* display: table;*/
+           
+            align-items: center;
+            min-width: 16em;
+        }
+        
+        
+        .mtb-utilityFooterFlex .mtb-copyright span
+        {
+              color: #aaa;
+            
+        }
+        
+    .mtb-copyright {
+    font-size: 0.5em;
+    position: relative;
+    top: -1em;
+}
+
+    .mtb-utilityFooterFlex .mtb-lang
+    {
+        flex: 0 0 11em;
+        align-items: center;
+        padding: 8px 0;
+    }
+
+
+.no-flexbox .mtb-utilityFooterFlex .mtb-lang, .flexbox.no-flexboxlegacy.no-webgl .mtb-utilityFooterFlex .mtb-lang
+    {
+        /*flex: 0 0 11em;*/
+        display: block;
+        align-items: center;
+        padding: 8px 0;
+    }
+        .mtb-utilityFooterFlex .mtb-lang select
+        {
+            margin: 0;
+            padding: 12px;
+            width: 100%;
+            background-color: #222;
+            color: #ddd;
+            border: none;
+            -webkit-appearance: listbox;
+            -moz-appearance: none;
+            background-image: url(../img/icons/arrow_white.svg);
+            background-repeat: no-repeat;
+            background-position: 95% 50%;
+            background-size: 12px;
+        }
+        
+        
+        .no-flexbox .mtb-utilityFooterFlex .mtb-lang select,  .flexbox.no-flexboxlegacy.no-webgl .mtb-utilityFooterFlex .mtb-lang select
+        {
+            margin: 0;
+            padding: 12px;
+            width: auto;
+            background-color: #222;
+            color: #ddd;
+            border: none;
+            -webkit-appearance: listbox;
+            -moz-appearance: none;
+            background-image: none;
+            background-repeat: no-repeat;
+            background-position: 95% 50%;
+            background-size: 12px;
+        }
+
+
+.mtb-utilityFooterFlex .mtb-lang select option
+{
+    display: block;
+    padding: 0px 2px 1px;
+    white-space: pre;
+    min-height: 1.2em;
+}
+@media screen and (max-width: 35em)
+{
+    .mtb-utilityFooterFlex
+    {
+         flex: 1 0 auto;
+        flex-direction: column;
+    }
+      .mtb-utilityFooterFlex .mtb-lang
+    {
+        flex: 1 0 auto;
+        flex-direction: column;
+    }
+    
+    .mtb-utilityFooterFlex .mtb-copyright {
+    position: relative;
+    top: 0em;
+}
+
+        .mtb-utilityFooterFlex .mtb-socialIcons
+        {
+            flex: 0 1 auto;
+            flex-direction: column;
+            
+        }
+        
+        .mtb-utilityFooterFlex .mtb-footerLinks
+        {
+            flex: 1 0 auto;
+           flex-direction: column;
+        }
+
+}

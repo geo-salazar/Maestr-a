@@ -1,0 +1,446 @@
+﻿
+// ensure namespace MC (minitab.com) exists
+var MC = (MC == null || typeof (MC) != "object") ? new Object() : MC;
+
+// define namespace for MC.cookieUtils
+// notes:
+// this file is maintained in the it.minitab.com solution (called EverestSolution-AppsDot as of this writing 8/5/13)
+// it is then copied to the other solutions
+// MC.cookieUtils, as a function, will be run once once this file is loaded (without being called)
+// intellisense notes (as of end of july '13):
+// typing: "MC." causes "cookieUtils" to be in intellisense list
+// typing: "MC.cookieUtils." causes the public members (fields and functions prefixed with "this.") to be in intellisense list
+MC.cookieUtils = new function () {
+   // private fields
+   var cookieDict = new Object();
+
+   // private functions
+   function init() {
+      populateCookieDictFromDocumentCookie();
+
+      // once init'd, point init() to a no-op
+      init = function () { };
+   };
+
+   function populateCookieDictFromDocumentCookie() {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+         var rawCookie = $.trim(cookies[i]);
+         var cookieNameValueObject = createCookieNameValueObjectFromRawCookie(rawCookie);
+         if (cookieNameValueObject && cookieNameValueObject != null) {
+            cookieDict[cookieNameValueObject.name] = cookieNameValueObject.value;
+         }
+      }
+   };
+
+   function createCookieNameValueObjectFromRawCookie(rawCookie) {
+      var cookieNameValueObject = new Object({ 'name': '', 'value': '' });
+
+      // do split so we can get name even if it doesn't have a '='
+      var cookieParts = rawCookie.split('=');
+      if (cookieParts && cookieParts.length > 0) {
+         var name = cookieParts[0]
+         cookieNameValueObject.name = $.trim(name);
+
+         // do indexOf in case the cookie has sub-cookies, eg: 'mc=languageCode=fr&localeId=1036'
+         var index = rawCookie.indexOf('=');
+         if (index > 1 && rawCookie.length > ++index) {
+            var value = rawCookie.substr(index);
+            cookieNameValueObject.value = $.trim(value);
+         }
+      }
+
+      return cookieNameValueObject;
+   };
+
+   function getSubCookieDictFromCookieDict(name) {
+      var value = cookieDict[name];
+      var subCookieDict = getSubCookieDictFromValue(value);
+
+      return subCookieDict;
+   };
+   
+
+
+   function getSubCookieDictFromValue(value) {
+      var subCookieDict = new Object();
+
+      if (value && (value.indexOf('=') > -1)) {
+         var rawSubCookies = value.split('&');
+         for (var i = 0; i < rawSubCookies.length; i++) {
+            var rawSubCookie = rawSubCookies[i];
+            var cookieNameValueObject = createCookieNameValueObjectFromRawCookie(rawSubCookie);
+            subCookieDict[cookieNameValueObject.name] = cookieNameValueObject.value;
+         }
+      }
+
+      return subCookieDict;
+   };
+
+   // set the mc cookie values from the subCookieDict provided, using defaults: name, domain, path, expires
+   function setSmcCookieFromSubCookieDict(subCookieDict) {
+      if (!subCookieDict || typeof (subCookieDict) != 'object' || subCookieDict.length < 1) {
+         return;
+      }
+
+      var value = '';
+      for (propName in subCookieDict) {
+         var prefix = (value.length > 0) ? '&' : '';
+         var subNameValue = prefix + propName + "=" + subCookieDict[propName];
+         value += subNameValue;
+      }
+
+      setCookieWithSmcDefaults('smc', value);
+   }
+
+   // set the cookie value value for the name, using defaults: domain, path, expires
+   function setCookieWithSmcDefaults(name, value) {
+      // note: domain needs to be minitab.com for any *.minitab.com site, but needs to be '' for any localhost site
+      var domain = (window.location.host.indexOf('minitab.com') > -1) ? ';domain=.minitab.com' : '';
+      var path = ';path=/';
+      /*var expiresDate = new Date();
+      expiresDate.setDate(expiresDate.getDate() + 365);
+      var expires = ';expires=' + expiresDate.toUTCString();*/
+      
+      var expiresDate = new Date();
+	  var expiresYear = expiresDate.getFullYear()+1;	
+		  expiresDate.setDate(expiresDate.getDate() + daysInYear(expiresYear));	
+      var expires = ';expires=' + expiresDate.toUTCString();
+      
+
+      var valuePlus = value + domain + path + expires;
+      //var valuePlus = escape(value) + domain + path + expires;
+      // ^ somewhere out there on the internet, someone is using "escape(...)" - what's up with that?
+
+      var fullCookie = name + "=" + valuePlus;
+      document.cookie = fullCookie + ";SameSite=Lax";
+   }
+   
+    function daysInYear(expiresYear) {
+    if(expiresYear % 4 === 0 && (expiresYear % 100 !== 0 || expiresYear % 400 === 0)) {
+        // Leap year
+        return 366;
+        } else {
+        // Not a leap year
+        return 365;
+        }
+    };
+
+   function getNowFormatted() {
+      var now = new Date();
+
+      var h = now.getHours();
+      if (h < 10) h = '0' + h;
+
+      var m = now.getMinutes();
+      if (m < 10) m = '0' + m;
+
+      var s = now.getSeconds();
+      if (s < 10) s = '0' + s;
+
+      var nf = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate() + ' ' + h + ':' + m + ':' + s;
+
+      return nf;
+   }
+
+   // public functions
+   // get the cookie value using the name (name is case-sensitive)
+   this.getCookieValue = function (name) {
+      init();
+
+      var value = cookieDict[name];
+      if (!value) {
+         value = '';
+      }
+
+      return value;
+   };
+
+   // get the cookie subValue using the name and subName (name and subName are case-sensitive)
+   this.getSubCookieValue = function (name, subName) {
+      init();
+
+      var subValue = '';
+      var subCookieDict = getSubCookieDictFromCookieDict(name);
+      if (subCookieDict) {
+         subValue = subCookieDict[subName];
+         if (!subValue) {
+            subValue = '';
+         }
+      }
+
+      return subValue;
+   };
+
+   // set the mc (minitab.com) cookie subName to subValue (subName is case-sensitive)
+   this.setSmcCookieSubNameSubValue = function (subName, subValue) {
+      init();
+
+      if (!subName || subName.length < 1) {
+         return;
+      }
+
+      // get the current mc cookie as a sub-cookie name/value dictionary (which might be empty)
+      var subCookieDict = getSubCookieDictFromCookieDict('smc');
+
+      // set (create or update) the additional cookie subName & subValue (as property name = value)
+      subCookieDict[subName] = subValue;
+
+      // set the mc cookie
+      setSmcCookieFromSubCookieDict(subCookieDict);
+   }
+};
+
+// SIG // Begin signature block
+// SIG // MIIgRwYJKoZIhvcNAQcCoIIgODCCIDQCAQExDzANBglg
+// SIG // hkgBZQMEAgEFADB3BgorBgEEAYI3AgEEoGkwZzAyBgor
+// SIG // BgEEAYI3AgEeMCQCAQEEEBDgyQbOONQRoqMAEEvTUJAC
+// SIG // AQACAQACAQACAQACAQAwMTANBglghkgBZQMEAgEFAAQg
+// SIG // lmOAPInB9lxc//2tEWP3//PHnqqAtWDvlVIyHCsEy5ug
+// SIG // gg7AMIIGsDCCBJigAwIBAgIQCK1AsmDSnEyfXs2pvZOu
+// SIG // 2TANBgkqhkiG9w0BAQwFADBiMQswCQYDVQQGEwJVUzEV
+// SIG // MBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
+// SIG // d3cuZGlnaWNlcnQuY29tMSEwHwYDVQQDExhEaWdpQ2Vy
+// SIG // dCBUcnVzdGVkIFJvb3QgRzQwHhcNMjEwNDI5MDAwMDAw
+// SIG // WhcNMzYwNDI4MjM1OTU5WjBpMQswCQYDVQQGEwJVUzEX
+// SIG // MBUGA1UEChMORGlnaUNlcnQsIEluYy4xQTA/BgNVBAMT
+// SIG // OERpZ2lDZXJ0IFRydXN0ZWQgRzQgQ29kZSBTaWduaW5n
+// SIG // IFJTQTQwOTYgU0hBMzg0IDIwMjEgQ0ExMIICIjANBgkq
+// SIG // hkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA1bQvQtAorXi3
+// SIG // XdU5WRuxiEL1M4zrPYGXcMW7xIUmMJ+kjmjYXPXrNCQH
+// SIG // 4UtP03hD9BfXHtr50tVnGlJPDqFX/IiZwZHMgQM+TXAk
+// SIG // ZLON4gh9NH1MgFcSa0OamfLFOx/y78tHWhOmTLMBICXz
+// SIG // ENOLsvsI8IrgnQnAZaf6mIBJNYc9URnokCF4RS6hnyzh
+// SIG // GMIazMXuk0lwQjKP+8bqHPNlaJGiTUyCEUhSaN4QvRRX
+// SIG // XegYE2XFf7JPhSxIpFaENdb5LpyqABXRN/4aBpTCfMjq
+// SIG // GzLmysL0p6MDDnSlrzm2q2AS4+jWufcx4dyt5Big2MEj
+// SIG // R0ezoQ9uo6ttmAaDG7dqZy3SvUQakhCBj7A7CdfHmzJa
+// SIG // wv9qYFSLScGT7eG0XOBv6yb5jNWy+TgQ5urOkfW+0/tv
+// SIG // k2E0XLyTRSiDNipmKF+wc86LJiUGsoPUXPYVGUztYuBe
+// SIG // M/Lo6OwKp7ADK5GyNnm+960IHnWmZcy740hQ83eRGv7b
+// SIG // UKJGyGFYmPV8AhY8gyitOYbs1LcNU9D4R+Z1MI3sMJN2
+// SIG // FKZbS110YU0/EpF23r9Yy3IQKUHw1cVtJnZoEUETWJrc
+// SIG // JisB9IlNWdt4z4FKPkBHX8mBUHOFECMhWWCKZFTBzCEa
+// SIG // 6DgZfGYczXg4RTCZT/9jT0y7qg0IU0F8WD1Hs/q27Iwy
+// SIG // CQLMbDwMVhECAwEAAaOCAVkwggFVMBIGA1UdEwEB/wQI
+// SIG // MAYBAf8CAQAwHQYDVR0OBBYEFGg34Ou2O/hfEYb7/mF7
+// SIG // CIhl9E5CMB8GA1UdIwQYMBaAFOzX44LScV1kTN8uZz/n
+// SIG // upiuHA9PMA4GA1UdDwEB/wQEAwIBhjATBgNVHSUEDDAK
+// SIG // BggrBgEFBQcDAzB3BggrBgEFBQcBAQRrMGkwJAYIKwYB
+// SIG // BQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBB
+// SIG // BggrBgEFBQcwAoY1aHR0cDovL2NhY2VydHMuZGlnaWNl
+// SIG // cnQuY29tL0RpZ2lDZXJ0VHJ1c3RlZFJvb3RHNC5jcnQw
+// SIG // QwYDVR0fBDwwOjA4oDagNIYyaHR0cDovL2NybDMuZGln
+// SIG // aWNlcnQuY29tL0RpZ2lDZXJ0VHJ1c3RlZFJvb3RHNC5j
+// SIG // cmwwHAYDVR0gBBUwEzAHBgVngQwBAzAIBgZngQwBBAEw
+// SIG // DQYJKoZIhvcNAQEMBQADggIBADojRD2NCHbuj7w6mdNW
+// SIG // 4AIapfhINPMstuZ0ZveUcrEAyq9sMCcTEp6QRJ9L/Z6j
+// SIG // fCbVN7w6XUhtldU/SfQnuxaBRVD9nL22heB2fjdxyyL3
+// SIG // WqqQz/WTauPrINHVUHmImoqKwba9oUgYftzYgBoRGRjN
+// SIG // YZmBVvbJ43bnxOQbX0P4PpT/djk9ntSZz0rdKOtfJqGV
+// SIG // WEjVGv7XJz/9kNF2ht0csGBc8w2o7uCJob054ThO2m67
+// SIG // Np375SFTWsPK6Wrxoj7bQ7gzyE84FJKZ9d3OVG3ZXQIU
+// SIG // H0AzfAPilbLCIXVzUstG2MQ0HKKlS43Nb3Y3LIU/Gs4m
+// SIG // 6Ri+kAewQ3+ViCCCcPDMyu/9KTVcH4k4Vfc3iosJocsL
+// SIG // 6TEa/y4ZXDlx4b6cpwoG1iZnt5LmTl/eeqxJzy6kdJKt
+// SIG // 2zyknIYf48FWGysj/4+16oh7cGvmoLr9Oj9FpsToFpFS
+// SIG // i0HASIRLlk2rREDjjfAVKM7t8RhWByovEMQMCGQ8M4+u
+// SIG // KIw8y4+ICw2/O/TOHnuO77Xry7fwdxPm5yg/rBKupS8i
+// SIG // bEH5glwVZsxsDsrFhsP2JjMMB0ug0wcCampAMEhLNKhR
+// SIG // ILutG4UI4lkNbcoFUCvqShyepf2gpx8GdOfy1lKQ/a+F
+// SIG // SCH5Vzu0nAPthkX0tGFuv2jiJmCG6sivqf6UHedjGzqG
+// SIG // VnhOMIIICDCCBfCgAwIBAgIQBzkFM164IT4ReX6SYe1C
+// SIG // OjANBgkqhkiG9w0BAQsFADBpMQswCQYDVQQGEwJVUzEX
+// SIG // MBUGA1UEChMORGlnaUNlcnQsIEluYy4xQTA/BgNVBAMT
+// SIG // OERpZ2lDZXJ0IFRydXN0ZWQgRzQgQ29kZSBTaWduaW5n
+// SIG // IFJTQTQwOTYgU0hBMzg0IDIwMjEgQ0ExMB4XDTIxMDky
+// SIG // MjAwMDAwMFoXDTIyMDkyMjIzNTk1OVowgd0xHTAbBgNV
+// SIG // BA8MFFByaXZhdGUgT3JnYW5pemF0aW9uMRMwEQYLKwYB
+// SIG // BAGCNzwCAQMTAlVTMRkwFwYLKwYBBAGCNzwCAQITCERl
+// SIG // bGF3YXJlMRAwDgYDVQQFEwc3MjYzMjAxMQswCQYDVQQG
+// SIG // EwJVUzEVMBMGA1UECBMMUGVubnN5bHZhbmlhMRYwFAYD
+// SIG // VQQHEw1TdGF0ZSBDb2xsZWdlMRUwEwYDVQQKEwxNaW5p
+// SIG // dGFiLCBMTEMxEDAOBgNVBAsTB01pbml0YWIxFTATBgNV
+// SIG // BAMTDE1pbml0YWIsIExMQzCCAiIwDQYJKoZIhvcNAQEB
+// SIG // BQADggIPADCCAgoCggIBAMmjL24N7ev0yJghcaspu8Yb
+// SIG // 0Jk58ItBp9J6QzGYCu8ylwHSv79S5UuXqdxOrfbW+EVP
+// SIG // VsfWSEXDDT6pp/X+IIKkOx7m+WFR6AIcZ7EAuM/OLwNT
+// SIG // vDWRw1HzsSitVAtaTo5gnp0JrCej92+mVOLLtOgqSXsE
+// SIG // PqIy7Xk9ViffKJQgXpTIDodzio4KaVhQVY/IAXNh0teC
+// SIG // BZ127pkwOjFsjGrUMaMOIgmqNhddF96tboIIudtmU/8R
+// SIG // yRecsU8y9RlmQe98TH/TC6AyDWuZo/msL5Mcd5pmkK/f
+// SIG // TCcfeKz7PudnQLY2ikZIzSiwZBs6fKwW42R3AMKrWjeT
+// SIG // v2/AQb8NDk72LIb9U/msofOao+UK+qLPugyLXsgvh112
+// SIG // p6+IYRYiCv8M6xhLf59tm37KMlZyY2+3QaVDJ1zR5pbT
+// SIG // DbhuLECtjX/JBfVAYTmXmP/dcY1QaGtKzx6xq6TfajPQ
+// SIG // /HQGYlz72wdZzr0E2wbcQf8kTUT67Lhi+II4pbLZiLwl
+// SIG // OC+F2wvowuG1kT5tR7GUD1BDd/j65N0hQLiNAnByH1RY
+// SIG // ykbnDLI3v4rWAqLqWqni74eaOVozfoSEr+Fz1GIUzYt/
+// SIG // o0AbDPkd/G5nMP8ALVXpnf9fOOp6ng0Yu4i1NVmwzRBE
+// SIG // 6KplpBbeO86c2kB25LYKMxQlVQ7/Dw92P+kZrpv57dbf
+// SIG // AgMBAAGjggI1MIICMTAfBgNVHSMEGDAWgBRoN+Drtjv4
+// SIG // XxGG+/5hewiIZfROQjAdBgNVHQ4EFgQUAePNOkzE+lWk
+// SIG // pzPd9YcSkD3aBJgwLgYDVR0RBCcwJaAjBggrBgEFBQcI
+// SIG // A6AXMBUME1VTLURFTEFXQVJFLTcyNjMyMDEwDgYDVR0P
+// SIG // AQH/BAQDAgeAMBMGA1UdJQQMMAoGCCsGAQUFBwMDMIG1
+// SIG // BgNVHR8Ega0wgaowU6BRoE+GTWh0dHA6Ly9jcmwzLmRp
+// SIG // Z2ljZXJ0LmNvbS9EaWdpQ2VydFRydXN0ZWRHNENvZGVT
+// SIG // aWduaW5nUlNBNDA5NlNIQTM4NDIwMjFDQTEuY3JsMFOg
+// SIG // UaBPhk1odHRwOi8vY3JsNC5kaWdpY2VydC5jb20vRGln
+// SIG // aUNlcnRUcnVzdGVkRzRDb2RlU2lnbmluZ1JTQTQwOTZT
+// SIG // SEEzODQyMDIxQ0ExLmNybDA9BgNVHSAENjA0MDIGBWeB
+// SIG // DAEDMCkwJwYIKwYBBQUHAgEWG2h0dHA6Ly93d3cuZGln
+// SIG // aWNlcnQuY29tL0NQUzCBlAYIKwYBBQUHAQEEgYcwgYQw
+// SIG // JAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0
+// SIG // LmNvbTBcBggrBgEFBQcwAoZQaHR0cDovL2NhY2VydHMu
+// SIG // ZGlnaWNlcnQuY29tL0RpZ2lDZXJ0VHJ1c3RlZEc0Q29k
+// SIG // ZVNpZ25pbmdSU0E0MDk2U0hBMzg0MjAyMUNBMS5jcnQw
+// SIG // DAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOCAgEA
+// SIG // qZzNbc34WUIxPNgoFO/gjJHREvufUCwYJVgeEVaVCzjh
+// SIG // glVxis9P9OdvMJl8LODhBf8vGTNzzLsP8G/jRpk8nSqi
+// SIG // ZEQ7uv2KZ28W+WIY0cK/ADJyi3lxE0BRVtJLe/nx5mI4
+// SIG // SVfw401pCcnxkceBI/4iFETu6eaU+SJoc0gXGfyMMikR
+// SIG // qygKhtIsDl2zx9ZrW9bA/SQ+jqASzl2vbXISQsoh8D3Z
+// SIG // nOT3Z4jCwpQUEAS1uv2EvvniUgRJ6DBWbqGS+P172uRa
+// SIG // SDO2TNN36woqPmr5TlWgU7KwQ+7DV5T07Qur5fLZ4Hpb
+// SIG // Qc71uC8aukxsutKsTBzXW2jx6A+3DulXBx+vvL5gHRtW
+// SIG // CykT3wDuUkywMFeEkucXJpuOgfVdhnWVDe7SJHAgmwBE
+// SIG // R5LVhCqP/PSmIjWQwCTFHTSUrF01ezhrGJxU6prUYcn2
+// SIG // K24JEsD41GbbctMTebBflHTPePt0JIjjv3COwGBS7N4X
+// SIG // 70BBK51FDuvJggTMax7gzUUWJdGJkaVT+HVSpTuRhxuu
+// SIG // uQYAEqG0LEpVx10bkhXsQ1+My31RJST5LlkAdvVpKzLz
+// SIG // O3Y8ao7j9URPta7xLU/v3wZZfXlj748Rr2OZk48KaIwO
+// SIG // ngY9UxOB2KoE+YE8WmwKUXHxp+s8F/yruMLUvLLXxDeH
+// SIG // lEVavgTfuH53bOfmjtV4lQExghDfMIIQ2wIBATB9MGkx
+// SIG // CzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2VydCwg
+// SIG // SW5jLjFBMD8GA1UEAxM4RGlnaUNlcnQgVHJ1c3RlZCBH
+// SIG // NCBDb2RlIFNpZ25pbmcgUlNBNDA5NiBTSEEzODQgMjAy
+// SIG // MSBDQTECEAc5BTNeuCE+EXl+kmHtQjowDQYJYIZIAWUD
+// SIG // BAIBBQCggbIwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcC
+// SIG // AQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUw
+// SIG // LwYJKoZIhvcNAQkEMSIEIHRwMSYVaWpEn3IWzaPlFgqW
+// SIG // 5C7duGYyC70qbd0RcesaMEYGCisGAQQBgjcCAQwxODA2
+// SIG // oBqAGABNAGkAbgBpAHQAYQBiACAAMQA5AC4AMaEYgBZo
+// SIG // dHRwOi8vd3d3Lm1pbml0YWIuY29tMA0GCSqGSIb3DQEB
+// SIG // AQUABIICABjrziNovTzFNpXpwLLyNvGaLmGZfZXFQjhJ
+// SIG // XJO5dCch42O9VTXpOVbMpFCvsSdla0+zY01r5iaTtFA+
+// SIG // reYmheSOW8DwKL2pp8ooshQDWymdRTbS9Yx5Ogcsyu2p
+// SIG // C071/5/v/SFlJeb4j8K2jceAe2JtNH9mh2TVoSk62xvL
+// SIG // nG6p0G6cmaWlBJhGm+MqfscCQq0HEh3OR904jAvhbfKv
+// SIG // pxxPRNohqfWrwb+lqEbIZlL0j6UdFPc0r58VKxWMHUCk
+// SIG // AKbFk/U2WPHJnTm9cKMgQoUAJbB18cmqUU9fT8QzrS2I
+// SIG // TBAWxoQ8hMVmc8jWpJa1xf8XFtL9yuY0bOEJ0BafUFb6
+// SIG // pHghsOtMLSCcOh837UT+br7gTF0reYslT6CXJvT9KS3o
+// SIG // udTg64zLoCk2y88te4Q1HzvIaFh4TKjI1+3GkK7t366f
+// SIG // b1nN3betpV10DSeQtoG9yBLVZ8dtfaLrW1BadpBFB/7u
+// SIG // /hVAGm/xRYoi0HRxCv104KZ9KwL95KavnCinDrXVy+k5
+// SIG // e1TG31lDJZFLYngVLbaJX74IiETBgihuMhyQE8clCkZZ
+// SIG // fuwiS+5SzibuzwJ2+FE98fB57le8OGPhC3GlHkcAsM9o
+// SIG // CQfOqmBkUsGiBQ7Lkhx63NTM7NKb4HPq/V2WTDYnf+Yv
+// SIG // 31RAKDdTKxrXGt+x04KphFKWJha494QAoYINfjCCDXoG
+// SIG // CisGAQQBgjcDAwExgg1qMIINZgYJKoZIhvcNAQcCoIIN
+// SIG // VzCCDVMCAQMxDzANBglghkgBZQMEAgEFADB4BgsqhkiG
+// SIG // 9w0BCRABBKBpBGcwZQIBAQYJYIZIAYb9bAcBMDEwDQYJ
+// SIG // YIZIAWUDBAIBBQAEINZCG8ykLQYJSnyjE1eu+5cw54Gm
+// SIG // 7ZXcfTN5cMkED1S5AhEAx2ntUqabBH6OvSHmIgIufBgP
+// SIG // MjAyMTEwMTMxNzEwNDNaoIIKNzCCBP4wggPmoAMCAQIC
+// SIG // EA1CSuC+Ooj/YEAhzhQA8N0wDQYJKoZIhvcNAQELBQAw
+// SIG // cjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0
+// SIG // IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEx
+// SIG // MC8GA1UEAxMoRGlnaUNlcnQgU0hBMiBBc3N1cmVkIElE
+// SIG // IFRpbWVzdGFtcGluZyBDQTAeFw0yMTAxMDEwMDAwMDBa
+// SIG // Fw0zMTAxMDYwMDAwMDBaMEgxCzAJBgNVBAYTAlVTMRcw
+// SIG // FQYDVQQKEw5EaWdpQ2VydCwgSW5jLjEgMB4GA1UEAxMX
+// SIG // RGlnaUNlcnQgVGltZXN0YW1wIDIwMjEwggEiMA0GCSqG
+// SIG // SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDC5mGEZ8WK9Q0I
+// SIG // pEXKY2tR1zoRQr0KdXVNlLQMULUmEP4dyG+RawyW5xpc
+// SIG // SO9E5b+bYc0VkWJauP9nC5xj/TZqgfop+N0rcIXeAhjz
+// SIG // eG28ffnHbQk9vmp2h+mKvfiEXR52yeTGdnY6U9HR01o2
+// SIG // j8aj4S8bOrdh1nPsTm0zinxdRS1LsVDmQTo3VobckyON
+// SIG // 91Al6GTm3dOPL1e1hyDrDo4s1SPa9E14RuMDgzEpSlwM
+// SIG // MYpKjIjF9zBa+RSvFV9sQ0kJ/SYjU/aNY+gaq1uxHTDC
+// SIG // m2mCtNv8VlS8H6GHq756WwogL0sJyZWnjbL61mOLTqVy
+// SIG // HO6fegFz+BnW/g1JhL0BAgMBAAGjggG4MIIBtDAOBgNV
+// SIG // HQ8BAf8EBAMCB4AwDAYDVR0TAQH/BAIwADAWBgNVHSUB
+// SIG // Af8EDDAKBggrBgEFBQcDCDBBBgNVHSAEOjA4MDYGCWCG
+// SIG // SAGG/WwHATApMCcGCCsGAQUFBwIBFhtodHRwOi8vd3d3
+// SIG // LmRpZ2ljZXJ0LmNvbS9DUFMwHwYDVR0jBBgwFoAU9Lbh
+// SIG // IB3+Ka7S5GGlsqIlssgXNW4wHQYDVR0OBBYEFDZEho6k
+// SIG // urBmvrwoLR1ENt3janq8MHEGA1UdHwRqMGgwMqAwoC6G
+// SIG // LGh0dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9zaGEyLWFz
+// SIG // c3VyZWQtdHMuY3JsMDKgMKAuhixodHRwOi8vY3JsNC5k
+// SIG // aWdpY2VydC5jb20vc2hhMi1hc3N1cmVkLXRzLmNybDCB
+// SIG // hQYIKwYBBQUHAQEEeTB3MCQGCCsGAQUFBzABhhhodHRw
+// SIG // Oi8vb2NzcC5kaWdpY2VydC5jb20wTwYIKwYBBQUHMAKG
+// SIG // Q2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdp
+// SIG // Q2VydFNIQTJBc3N1cmVkSURUaW1lc3RhbXBpbmdDQS5j
+// SIG // cnQwDQYJKoZIhvcNAQELBQADggEBAEgc3LXpmiO85xrn
+// SIG // IA6OZ0b9QnJRdAojR6OrktIlxHBZvhSg5SeBpU0UFRkH
+// SIG // efDRBMOG2Tu9/kQCZk3taaQP9rhwz2Lo9VFKeHk2eie3
+// SIG // 8+dSn5On7UOee+e03UEiifuHokYDTvz0/rdkd2NfI1Jp
+// SIG // g4L6GlPtkMyNoRdzDfTzZTlwS/Oc1np72gy8PTLQG8v1
+// SIG // Yfx1CAB2vIEO+MDhXM/EEXLnG2RJ2CKadRVC9S0yOIHa
+// SIG // 9GCiurRS+1zgYSQlT7LfySmoc0NR2r1j1h9bm/cuG08T
+// SIG // HfdKDXF+l7f0P4TrweOjSaH6zqe/Vs+6WXZhiV9+p7SO
+// SIG // Z3j5NpjhyyjaW4emii8wggUxMIIEGaADAgECAhAKoSXW
+// SIG // 1jIbfkHkBdo2l8IVMA0GCSqGSIb3DQEBCwUAMGUxCzAJ
+// SIG // BgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMx
+// SIG // GTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
+// SIG // BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAe
+// SIG // Fw0xNjAxMDcxMjAwMDBaFw0zMTAxMDcxMjAwMDBaMHIx
+// SIG // CzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJ
+// SIG // bmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xMTAv
+// SIG // BgNVBAMTKERpZ2lDZXJ0IFNIQTIgQXNzdXJlZCBJRCBU
+// SIG // aW1lc3RhbXBpbmcgQ0EwggEiMA0GCSqGSIb3DQEBAQUA
+// SIG // A4IBDwAwggEKAoIBAQC90DLuS82Pf92puoKZxTlUKFe2
+// SIG // I0rEDgdFM1EQfdD5fU1ofue2oPSNs4jkl79jIZCYvxO8
+// SIG // V9PD4X4I1moUADj3Lh477sym9jJZ/l9lP+Cb6+NGRwYa
+// SIG // VX4LJ37AovWg4N4iPw7/fpX786O6Ij4YrBHk8JkDbTuF
+// SIG // fAnT7l3ImgtU46gJcWvgzyIQD3XPcXJOCq3fQDpct1Hh
+// SIG // oXkUxk0kIzBdvOw8YGqsLwfM/fDqR9mIUF79Zm5WYScp
+// SIG // iYRR5oLnRlD9lCosp+R1PrqYD4R/nzEU1q3V8mTLex4F
+// SIG // 0IQZchfxFwbvPc3WTe8GQv2iUypPhR3EHTyvz9qsEPXd
+// SIG // rKzpVv+TAgMBAAGjggHOMIIByjAdBgNVHQ4EFgQU9Lbh
+// SIG // IB3+Ka7S5GGlsqIlssgXNW4wHwYDVR0jBBgwFoAUReui
+// SIG // r/SSy4IxLVGLp6chnfNtyA8wEgYDVR0TAQH/BAgwBgEB
+// SIG // /wIBADAOBgNVHQ8BAf8EBAMCAYYwEwYDVR0lBAwwCgYI
+// SIG // KwYBBQUHAwgweQYIKwYBBQUHAQEEbTBrMCQGCCsGAQUF
+// SIG // BzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYI
+// SIG // KwYBBQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0
+// SIG // LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RDQS5jcnQw
+// SIG // gYEGA1UdHwR6MHgwOqA4oDaGNGh0dHA6Ly9jcmw0LmRp
+// SIG // Z2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
+// SIG // QS5jcmwwOqA4oDaGNGh0dHA6Ly9jcmwzLmRpZ2ljZXJ0
+// SIG // LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RDQS5jcmww
+// SIG // UAYDVR0gBEkwRzA4BgpghkgBhv1sAAIEMCowKAYIKwYB
+// SIG // BQUHAgEWHGh0dHBzOi8vd3d3LmRpZ2ljZXJ0LmNvbS9D
+// SIG // UFMwCwYJYIZIAYb9bAcBMA0GCSqGSIb3DQEBCwUAA4IB
+// SIG // AQBxlRLpUYdWac3v3dp8qmN6s3jPBjdAhO9LhL/KzwMC
+// SIG // /cWnww4gQiyvd/MrHwwhWiq3BTQdaq6Z+CeiZr8JqmDf
+// SIG // dqQ6kw/4stHYfBli6F6CJR7Euhx7LCHi1lssFDVDBGiy
+// SIG // 23UC4HLHmNY8ZOUfSBAYX4k4YU1iRiSHY4yRUiyvKYnl
+// SIG // eB/WCxSlgNcSR3CzddWThZN+tpJn+1Nhiaj1a5bA9Fhp
+// SIG // DXzIAbG5KHW3mWOFIoxhynmUfln8jA/jb7UBJrZspe6H
+// SIG // USHkWGCbugwtK22ixH67xCUrRwIIfEmuE7bhfEJCKMYY
+// SIG // Vs9BNLZmXbZ0e/VWMyIvIjayS6JKldj1po5SMYIChjCC
+// SIG // AoICAQEwgYYwcjELMAkGA1UEBhMCVVMxFTATBgNVBAoT
+// SIG // DERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2lj
+// SIG // ZXJ0LmNvbTExMC8GA1UEAxMoRGlnaUNlcnQgU0hBMiBB
+// SIG // c3N1cmVkIElEIFRpbWVzdGFtcGluZyBDQQIQDUJK4L46
+// SIG // iP9gQCHOFADw3TANBglghkgBZQMEAgEFAKCB0TAaBgkq
+// SIG // hkiG9w0BCQMxDQYLKoZIhvcNAQkQAQQwHAYJKoZIhvcN
+// SIG // AQkFMQ8XDTIxMTAxMzE3MTA0M1owKwYLKoZIhvcNAQkQ
+// SIG // AgwxHDAaMBgwFgQU4deCqOGRvu9ryhaRtaq0lKYkm/Mw
+// SIG // LwYJKoZIhvcNAQkEMSIEICoA/lSPE0APn0dY5p8/tBQO
+// SIG // S5XNBxyEG3jHUKoYR0F/MDcGCyqGSIb3DQEJEAIvMSgw
+// SIG // JjAkMCIEILMQkAa8CtmDB5FXKeBEA0Fcg+MpK2FPJpZM
+// SIG // jTVx7PWpMA0GCSqGSIb3DQEBAQUABIIBAK92JpJcDTlA
+// SIG // tqhSdUAIBmiyeM8QzghLbrrUt8LjPrnn9GwFM4ltzzqN
+// SIG // it5ByAHS9yXelicz2Pa+gzHF0aiDTw1T3HoQRmKMJ1cp
+// SIG // vfZx23B6Ks9qmuXYNLfU8IoHBEMtM1GIRt6wb79ZqGT5
+// SIG // BFqz/tBkXOiJIGhdY3qUC6dL3y3ldoWBzpH1O2o7Z7Ru
+// SIG // fTc9MltMWPYVtADcre41J9x35x8BwraqC6zdeYCYJOha
+// SIG // c2PM2cT94hfyIWHKRuO9yuCG/cvvVBvvK0sCrUKv3sDX
+// SIG // e7OAuq3Cl6HzTNsN6K4Dbct6om8MzWF8i7MHjeEqW8ON
+// SIG // OTxZI2doI9rrEycg4XVG3VY=
+// SIG // End signature block

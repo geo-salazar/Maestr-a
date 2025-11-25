@@ -1,0 +1,837 @@
+﻿
+@import url(https://fonts.googleapis.com/icon?family=Material+Icons);
+/*  .productHeader
+  {
+   position: relative;
+   height: 64px;
+   background-color: #eee;
+   background-color: #333;
+   color: #fff;
+
+  }*/
+  
+  .productHeader {
+    height: 64px;
+    background-color: #333;
+    color: #fff;
+    position: relative;
+    top: 0;
+    right: 0;
+    z-index: 999;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);   
+}
+
+span.key-label
+{
+    white-space: nowrap;
+}
+
+
+.sub, .sup
+{
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+  font-weight: inherit;
+  white-space: nowrap;
+}
+
+em.i ~ .sup, em.i ~ .sub
+{
+
+    padding-left: 0.8mm;
+}
+.sup {
+    top: -0.5em;
+    color: inherit;
+}
+
+.sub {
+    bottom: -0.25em;
+    color: inherit;
+}
+  
+  
+  .brand-dvz  .productHeader, .brand-qt  .productHeader
+  {
+   position: relative;
+   height: 64px;
+   background-color: white;
+   color: #fff;
+
+  }
+
+   .productHeader .menuButton
+   {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 64px;
+    height: 64px;
+    font-size: small;
+    
+    display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+    display: -ms-flexbox;  /* TWEENER - IE 10 */
+    display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+    display: flex;
+    display: table-cell\0;
+    padding-top: 16px\0;
+    -ms-flex-pack: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    -ms-align-items: center;
+    -moz-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    -ms-justify-content: center;
+    -mox-justify-content: center;
+    justify-content: center;
+    cursor: pointer;
+ /*   background-color: #4c8fdc;*/
+    color: #fff;
+    text-align: center\0;
+    z-index: 999;
+   }
+   
+  .brand-qc .productHeader .menuButton
+   {
+       background-color: #f4911e;
+   }
+   
+   .brand-mcon .productHeader .menuButton
+   {
+       background-color: #33b2c1;
+   }
+   .brand-rtspc .productHeader .menuButton
+   {
+       background-color: #0F3C61;
+   }
+   
+  .brand-modelops .productHeader .menuButton
+   {
+       background-color: #cc1e4b;
+   }
+   
+     .brand-mtbws .productHeader .menuButton
+   {
+       background-color: #FFE000;
+   }
+
+
+  .brand-mss .productHeader .menuButton
+   {
+        background-color: #6CB33F;
+   }
+   
+  .brand-mxp .productHeader .menuButton
+   {
+       background-color: #004D71;
+   }
+   
+  .brand-msc .productHeader .menuButton
+   {
+       background-color: #4C8FDC;
+   }
+  .brand-qs .productHeader .menuButton
+   {
+       background-color: #E31837;
+   }
+
+  .brand-dvz .productHeader .menuButton
+   {
+       background-color: #00AAA6;
+   }
+   
+  .brand-corp .productHeader .menuButton
+   {
+       background-color: #4C8FDC;
+   }
+   
+   .brand-ds .productHeader .menuButton
+   {
+       background-color: #4C8FDC;
+   }
+
+
+   
+.material-icons
+    {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    color: #fff;
+
+}
+
+
+
+      @media screen and (-webkit-min-device-pixel-ratio:0) { 
+    /* Safari only override */
+    ::i-block-chrome, .menuButton {
+       display: table-cell;
+        vertical-align: middle;
+     text-align: center;
+        padding-top: 16px;
+    } 
+}
+
+
+   .productHeader .productTitlebar
+   {
+    position: absolute;
+    height: 64px;
+    margin-left: 80px;
+    display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+    display: -ms-flexbox;  /* TWEENER - IE 10 */
+    display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+    display: flex;
+    display: table-cell\0; // ie9
+    text-align: center\0;
+    vertical-align: middle\0;
+    padding-top: 16px\0;
+    -ms-flex-pack: center;
+    -ms-flex-align: center;   
+    -webkit-align-items: center;
+    -ms-align-items: center;
+    -moz-align-items: center;
+    align-items: center;
+    font-size: large;
+    font-weight: 200;
+    
+   }
+   
+         @media screen and (-webkit-min-device-pixel-ratio:0) { 
+    /* Safari only override */
+    ::i-block-chrome,  .productHeader .productTitlebar {
+       display: table-cell;
+        vertical-align: middle;
+     text-align: center;
+        padding-top: 16px;
+    } 
+}
+   
+   .productTitlebar a, .productTitlebar a *, .productTitlebar a:link, .productTitlebar a:link *, .productTitlebar a:visited, .productTitlebar a:visited *, .productTitlebar a:hover, .productTitlebar a:hover *  
+   {
+       color: #FFFFFF;
+       text-decoration: none;
+       font-size: inherit;
+       font-weight: inherit;
+   }
+   
+   
+
+  .helpSearchBar
+  {
+   position: relative;
+   height: 64px;
+   background-color: #eee;
+   border-top: 1px solid #ccc;
+   border-bottom: 1px solid #ccc;
+   display: block\0; // ie9
+   display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+   display: -ms-flexbox;  /* TWEENER - IE 10 */
+   display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+   display: flex;
+   -webkit-align-items: center;
+    -ms-align-items: center;
+    -moz-align-items: center;
+     -ms-flex-pack: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    -ms-justify-content: center;
+    -mox-justify-content: center;
+    justify-content: center;
+    text-align: center;
+    padding-bottom: 10px\0;
+    z-index: 999;
+ 
+  }
+    .helpSearchBarClear
+  {
+   position: relative;
+   height: 6px;
+   background-color: white;
+   display: block\0; // ie9
+   display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+   display: -ms-flexbox;  /* TWEENER - IE 10 */
+   display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+   display: flex;
+   -webkit-align-items: center;
+    -ms-align-items: center;
+    -moz-align-items: center;
+     -ms-flex-pack: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    -ms-justify-content: center;
+    -mox-justify-content: center;
+    justify-content: center;
+    text-align: center;
+    padding-bottom: 10px\0;
+    z-index: 999;
+  }
+
+   .helpSearchBar input
+   {
+    padding: 12px;
+    width: 704px;
+    max-width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin: 16px 0;
+    margin: 0 32px;
+    margin-top: 10px\0;
+    box-sizing: border-box;
+    padding-right: 64px;
+    background-image: url(../img/search.png);
+    background-repeat: no-repeat;
+    background-position: 98% 50%;
+
+   }
+   
+   @media screen and (-webkit-min-device-pixel-ratio:0) { 
+    /* Safari only override */
+    ::i-block-chrome,  .helpSearchBar input {
+      margin-top: 10px;
+    } 
+}
+
+
+  .offCanvasPage
+  {
+   position: absolute;
+   top: 0;
+   box-sizing: border-box;
+   overflow: hidden;
+   width: 100%;
+  }
+
+   .offCanvasPage.current
+   {
+    left: 0;
+    transition: left 0.2s ease-in-out;
+   }
+
+   .offCanvasPage.next
+   {
+    left: 100%;
+    transition: left 0.2s ease-in-out;
+   }
+   .offCanvasPage.previous
+   {
+    left: -100%;
+    transition: left 0.2s ease-in-out;
+   }
+
+  .offCanvasNav .menuBar
+  {
+   position: relative;
+   top: 0;
+   left: 0;
+   width: 100%;
+   border-bottom: 1px solid #444;
+   background: #2a2a2a;
+  }
+  
+    .menuBar > ul
+ {
+ display: block;
+ list-style-type: none;
+ padding: 0;
+ margin: 0;
+ width: 100%;
+ 
+}
+
+.menuBar > ul li
+{
+    
+    
+}
+   .offCanvasNav .menuBar .home, .menuBar .home
+   {
+    position: relative;
+    height: 64px;
+    color: #eee;
+    display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+    display: -ms-flexbox;  /* TWEENER - IE 10 */
+    display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+    display: flex; 
+    display: block\0; // ie9
+    -ms-flex-align: center;
+    align-items: center;
+    box-sizing: border-box;
+    cursor: pointer;
+    padding: 8px 24px;
+    padding-left: 44px;
+    padding-top: 22px\0;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #444;
+    font-size: small;
+    background-image: url(../img/homeIcon.png);
+    background-size: 14px;
+    background-repeat: no-repeat;
+    background-position: 20px 50%;
+    vertical-align: middle\0;
+    text-align: left\0;
+   }
+   
+   
+      .offCanvasNav .menuBar .menuItem, .menuBar .menuItem
+   {
+    position: relative;
+    /*max-height: 64px;*/
+    color: #eee;
+    display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+    display: -ms-flexbox;  /* TWEENER - IE 10 */
+    display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+    display: flex; 
+    display: block\0; // ie9
+    -ms-flex-align: center;
+    align-items: center;
+    box-sizing: border-box;
+    cursor: pointer;
+    padding: 8px 24px;
+    padding-left: 44px;
+    padding-top: 22px\0;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #444;
+    font-size: small;
+    /*background-image: url(../img/homeIcon.png);*/
+    background-size: 14px;
+    background-repeat: no-repeat;
+    background-position: 20px 50%;
+    vertical-align: middle\0;
+    text-align: left\0;
+   }
+   @media screen and (-webkit-min-device-pixel-ratio:0) { 
+    /* Safari only override */
+    ::i-block-chrome,.menuBar .home, .menuBar .menuItem  {
+       display: table-cell;
+        vertical-align: middle;
+    text-align: left;
+    } 
+}
+   
+   .menuBar .home:hover,  .menuBar .menuItem:hover, .menuBar .back:hover
+   {
+       text-decoration: none;
+   }
+   
+    .menuBar a, .menuList a, .menuBar a:hover, .menuList a:hover
+   {
+       text-decoration: none;
+   }
+
+   .offCanvasNav .menuBar .back, .menuBar .back
+   {
+    position: relative;
+    left: 64px;
+    left: 0;
+    right: 0;
+    padding: 8px;
+    padding-left: 44px;
+    /*padding-top: 24px;*/
+    height: 64px;
+     display: table-cell\0; // ie9
+    display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+    display: -ms-flexbox;  /* TWEENER - IE 10 */
+    display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    color: #ddd;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-sizing: border-box;
+    font-weight: 400;
+    font-size: small;
+    border-bottom: 1px solid #444;
+
+    background-image: url(../img/arrowhead-back.png);
+    background-size: 8px;
+    background-repeat: no-repeat;
+    background-position: 20px 50%;
+    vertical-align: middle\0;
+    text-align: left;
+
+
+   }
+   
+   
+      @media screen and (-webkit-min-device-pixel-ratio:0) { 
+    /* Safari only override */
+    ::i-block-chrome, .menuBar .back{
+       display: table-cell;
+        vertical-align: middle;
+    text-align: left;
+    } 
+}
+
+    .offCanvasNav .menuBar .home:hover, .offCanvasNav .menuBar .menuItem:hover, .offCanvasNav .menuBar .back:hover
+    {
+     text-decoration: none;
+    }
+
+
+  .menuList
+  {
+       width: 100%; 
+}
+
+
+  .offCanvasNav .menuBar + .menuList, .menuBar + .menuList
+  {
+   padding-top: 0px;
+   margin-top: -1px;
+  }
+  
+
+  .menuList > ul
+ {
+ display: block;
+ list-style-type: none;
+ padding: 0;
+ margin: 0;
+}
+
+.menuList > ul li
+{
+    
+}
+
+  .offCanvasNav .menuList, .offCanvasNav .menuList ul 
+  {
+   padding-top: 0px;
+   padding-left: 0;
+   list-style-type: none;
+  }
+
+  .offCanvasNav .menuList .menuItem, .menuList ul li .menuItem, .menuList .menuItem
+  {
+   min-height: 48px;
+   padding: 16px;
+   padding-left: 32px;
+   padding-right: 64px;
+   border-bottom: 1px solid #444;
+   font-size: small;
+
+   display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+   display: -ms-flexbox;  /* TWEENER - IE 10 */
+   display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+   display: flex;
+      display: block; // ie9
+    -ms-flex-align: center;
+   align-items: center;
+   cursor: pointer;
+   color: #ddd;
+   border-left: 8px solid transparent;
+   position: relative;
+   box-sizing: border-box;
+
+
+  }
+
+   .offCanvasNav .menuList .menuItem.current, .menuList ul li .menuItem.current
+   {
+    background-color: #444;
+   }
+
+   .offCanvasNav .menuList .menuItem.pagePanel .icon,  .menuList ul li .menuItem.pagePanel .icon,  .menuList ul li .menuItem .icon
+   {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 48px;
+    height: 100%;
+    background-image: url(../img/arrowhead-forward.png);
+    background-repeat: no-repeat;
+    background-size: 8px;
+    background-position: 50% 50%;
+   }
+
+   .offCanvasNav .menuList .menuItem:hover, .menuList ul li .menuItem:hover
+   {
+    text-decoration: none;
+   }
+   
+      .offCanvasNav .brand-mss .menuList .menuItem:hover, .brand-mss .menuList ul li .menuItem:hover
+   {
+    border-left: 8px solid #6CB33F;
+    text-decoration: none;
+   }
+
+      .offCanvasNav .brand-qc .menuList .menuItem:hover, .brand-qc .menuList ul li .menuItem:hover
+   {
+     border-left: 8px solid #F3901D;
+    text-decoration: none;
+   }
+     .offCanvasNav .brand-mcon .menuList .menuItem:hover,  .brand-mcon .menuList ul li .menuItem:hover
+   {
+     border-left: 8px solid #33b2c1;
+    text-decoration: none;
+   }
+   
+   .offCanvasNav .brand-mtbws .menuList .menuItem:hover, .brand-mtbws .menuList ul li .menuItem:hover
+   {
+     border-left: 8px solid #FFE000;
+    text-decoration: none;
+   }
+
+      .offCanvasNav .brand-mxp .menuList .menuItem:hover, .brand-mxp .menuList ul li .menuItem:hover
+   {
+      border-left: 8px solid #004D71;
+    text-decoration: none;
+   }
+      .offCanvasNav .brand-qs .menuList .menuItem:hover, .brand-qs .menuList ul li .menuItem:hover
+   {
+   border-left: 8px solid #E31837;
+    text-decoration: none;
+   }
+
+      .offCanvasNav .brand-qt .menuList .menuItem:hover, .brand-qt .menuList ul li .menuItem:hover
+   {
+   border-left: 8px solid #B51A8A;
+    text-decoration: none;
+   }
+      .offCanvasNav .brand-dvz .menuList .menuItem:hover, .brand-dvz .menuList ul li .menuItem:hover
+   {
+   border-left: 8px solid #00AAA6;
+    text-decoration: none;
+   }
+   
+  .offCanvasNav .brand-corp .menuList .menuItem:hover, .brand-corp .menuList ul li .menuItem:hover
+   {
+   border-left: 8px solid #4C8FDC;
+    text-decoration: none;
+   }
+   
+   .offCanvasNav .brand-ds .menuList .menuItem:hover, .brand-ds .menuList ul li .menuItem:hover
+   {
+   border-left: 8px solid #4C8FDC;
+    text-decoration: none;
+   }
+   
+    
+    .offCanvasNav  .menuList .menuHeader, .menuList .menuHeader
+   {
+    font-weight: 600;
+    font-size: medium;
+    border-left: 8px solid transparent;
+    cursor: default;
+    /*border-top: 1px solid #444;*/
+    min-height: 48px;
+   /* padding: 8px;*/
+    padding-left: 16px;
+    font-weight: 400;
+    font-size: small;
+/*    text-transform: uppercase;*/
+    background-color: #222;
+    color: #999;
+   }
+   
+
+.offCanvasNav .menuList .menuHeader.dark, .menuBar .menuList .menuHeader.dark
+{
+ background-color: #222;
+}
+
+ .offCanvasNav .menuList .menuHeader.subh, .menuBar .menuList .subh {
+    min-height: 16px;
+    background-color: #333;
+    border-left: 8px solid transparent;
+}
+
+.offCanvasNav .menuList .menuHeader.subh:hover,  .menuBar .menuList .subh:hover {
+    background-color: #333 !important;
+}
+
+/*    .offCanvasNav .menuList .menuHeader + .menuHeader, .menuBar .menuList .menuHeader + .menuHeader
+                {
+
+                    
+                }*/
+
+
+              body .offCanvasNav .menuList .menuItem.menuHeader:hover,  .menuBar .menuList .menuItem.menuHeader:hover
+                {
+                    background-color: #222;
+                    border-left: 8px solid transparent;
+                }
+
+.offCanvasNav .menuList .menuHeader.dark, .menuList .menuHeader.dark
+{
+ background-color: #222;
+}
+
+
+
+
+/* additional styles in pageFramework.css */
+
+.offCanvasShow .offCanvasNav
+{
+    box-shadow: -3px -0px 1px rgba(0,0,0,.3)
+}
+
+.offCanvasNav
+{
+    overflow-y: auto;
+    
+}
+
+.offCanvasNav::-webkit-scrollbar
+{
+    width: 6px;
+}
+.offCanvasNav::-webkit-scrollbar-track
+{
+    background-color: #111;
+}
+.offCanvasNav::-webkit-scrollbar-thumb
+{
+    background-color: #666;
+
+}
+
+.offCanvasNav .inner
+{
+}
+
+    .offCanvasNav .header svg
+    {
+        width: 116px;
+        height: 20px;
+        fill: #eee ;
+        margin: 16px;
+    }
+
+    .offCanvasNav .navSectionHeader
+    {
+        margin-top: 0px;
+        color: #ccc;
+        padding: 8px 16px;
+        font-size: .7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        background: #111;
+    }
+
+    .offCanvasNav .menu
+    {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+        margin: 0px 0;
+        font-size: small;
+    }
+
+    .offCanvasNav .dropdownBox ul
+    {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+    }
+
+
+        .offCanvasNav .menu li a
+        {
+            display: block;
+            padding: 16px 16px;
+            border-top: 1px solid #555;
+            position: relative;
+            color: #eee;
+            cursor: pointer;
+            outline: none;
+            transition: background-color 0s;    
+            font-size: .9rem;
+            font-weight: 400;
+
+        }
+
+
+    .offCanvasNav .dropdownBox
+    {
+       display: none;
+    }
+
+    .offCanvasNav .dropdown.expand .dropdownBox
+    {
+        display: block;
+    }
+
+        .offCanvasNav .dropdownBox ul a
+        {
+            padding-left: 32px;
+            background-color: #4c8fdc;
+            transition: background-color 0s;
+            border-top: 1px solid #666;
+            background-color: #4d4d4d;
+            color: #eee;
+        }
+
+            .offCanvasNav .dropdownBox ul a:hover
+            {
+
+            }      
+    
+    
+    .offCanvasNav .menu li a:hover
+            {
+                background-color: #4c8fdc;
+                color: #eee;
+                text-decoration: none;
+            }
+
+
+
+    .offCanvasNav .menu li a .icon
+    {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+
+    }
+
+    .offCanvasNav .menu .dropdown
+    {
+        position: relative;
+    }
+
+    .offCanvasNav .menu .dropdown .icon
+    {
+        position: absolute;
+        right: 0;
+        top: 4px;
+
+        width: 48px;
+        height: 48px;
+
+        background-image: url(../img/arrowhead7.svg);
+        background-size: 12px;
+        background-repeat: no-repeat;
+        background-position: center center;
+        transform: rotate(180deg);
+
+    }
+
+        .offCanvasNav .menu .dropdown.expand .icon
+        {
+            transform: rotate(-90deg);
+        }
+

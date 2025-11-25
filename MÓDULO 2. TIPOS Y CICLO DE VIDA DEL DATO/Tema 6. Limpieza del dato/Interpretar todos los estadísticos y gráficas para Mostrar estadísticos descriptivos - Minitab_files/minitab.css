@@ -1,0 +1,410 @@
+
+
+/* New Worksheet Table Styles */
+
+
+table.worksheet th.entry {
+    padding-bottom: 0px!important;
+}
+.formDesc{
+ background: url('../img/green_check.png') no-repeat 8px 7px;
+ background-position: right 2px top 3px; 
+}
+
+.colChange{
+ background: url('../img/colChange.png') no-repeat 8px 8px;
+ background-position: right 2px top 3px; 
+}
+
+.formMark{
+ background: url('../img/colCheck.png') no-repeat 8px 8px;
+ background-position: right 2px bottom 2px; 
+}
+
+.formDesc.formMark{
+ background: url('../img/formDescM.png') no-repeat 8px 18px;
+ background-position: right 2px top 3px; 
+}
+
+.colDesc{
+ background: url('../img/red_corner.png') no-repeat 5px 5px;
+ background-position: right top; 
+}
+
+.colDir{
+ background: url('../img/arrow.png') no-repeat 6px 7px;
+ background-position: center; 
+}
+
+
+#spanner > a > span
+{
+    
+
+margin-left: 40px;
+margin-top: -25px;
+display: block;
+
+}
+
+.prod-banner {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: #242628;
+    background-image: url("../img/mtb_hero.jpg");
+
+    background-position: 0 0;
+background-size: cover; 
+background-repeat: repeat-y repeat-x;
+height: 112px;
+width: 100%;
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+    min-width: 300px;
+  
+    
+}
+
+
+.resource > .section > .sectiontitle
+{
+
+font-size: 100%;
+text-align: left;
+font-weight: normal;
+
+}
+
+.resource > .section > p
+{
+    
+font-size: 90%;    
+}
+
+.home\.featurediv .sectiontitle
+{
+
+  font-family: "Proxima Nova Light" , "Segoe UI" , Frutiger, "Frutiger Linotype" , "Dejavu Sans" , "Helvetica Neue" , Tahoma, Arial, sans-serif;
+font-size: 24px;
+text-align: center;
+color: black;
+font-weight: normal;
+}
+
+.home\.featurediv .sectiontitle a
+{
+
+
+color: black;
+text-decoration: none;
+}
+
+.home\.featurediv .p
+{
+
+font-family: 'Segoe UI';
+text-align: center;
+}
+
+.feature ul.listcol .li
+
+{
+	
+padding-left: 0;
+margin-left: 0;
+
+}
+
+
+.feature  ul.ul, .resource ul.ul
+
+{
+list-style-type: none;	
+padding-left: 0;
+padding-right: 0;
+padding-bottom: 0;
+padding-top: 16px;
+
+margin-left: 0;
+margin-right: 0;
+margin-top: 0;
+margin-bottom: 16px;
+
+
+
+}
+
+
+.feature  ul.ul li, .resource ul.ul li
+
+{
+padding-bottom: 2px;
+margin-bottom: 0;
+}
+
+
+
+.home\.resourcediv .sectiontitle a
+{
+color: #3399FF;
+
+}
+
+.home\.resourcediv .p
+{
+
+font-family: 'Segoe UI';
+text-align: left;
+}
+
+
+/*.figure
+
+{
+	
+min-width: 200px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+clear: both;
+padding-top: 5px;
+	
+}
+*/
+/*div .left
+
+{
+	
+float: left;	
+}*/
+
+/*div .noWrap
+
+{
+	
+float: none;	
+}*/
+/*
+li .figure
+
+{
+margin-top: 8px;
+margin-bottom: 12px;
+	
+}*/
+
+.toggle_text  {
+ 
+    overflow : hidden;
+    display: none;
+ 
+}
+
+.toggle_text a {
+ 
+    display: none;
+ 
+}
+
+
+.more
+{
+  cursor : pointer;   
+display: inline;    
+}
+
+
+.less
+{
+  cursor : pointer;   
+display: none;    
+}
+
+.expand
+{
+    
+    cursor : pointer;
+}
+
+
+/*.expandM:before
+{
+    content: "More";
+    cursor : pointer;
+}
+
+
+.expandL:after
+{
+    content: "Less";
+    cursor : pointer;
+}
+*/
+
+
+a.expand {
+   
+    font-family : 'Segoe UI', Arial;
+    font-weight : normal;
+
+     cursor: pointer;
+  
+    text-decoration : none;
+    outline : 0;
+    display : block;
+}
+.ie8 a.expand {
+    font-family : 'Segoe UI', Arial;
+    font-weight : normal;
+
+      cursor: pointer;
+
+    text-decoration : none;
+    outline : 0;
+    display : block;
+}
+a.expand:hover {
+    
+  cursor: pointer;
+}
+
+.bookinfo
+{
+/*border-bottom-style:solid;
+border-bottom-color: #AAAAAA;
+border-bottom-width: thin;*/
+margin-bottom: 3em;
+
+}
+#section-container.book
+{
+    
+margin-left: 0;
+padding-left: 0;
+}
+.nav-chapter
+{
+
+/*border-bottom-style:solid;
+border-bottom-color: #AAAAAA;
+border-bottom-width: thin;*/
+margin-bottom: 48px;
+margin-top: 48px;
+
+ font-family: 'Proxima Nova Regular' , 'Segoe UI' , Frutiger, 'Frutiger Linotype' , 'Dejavu Sans' , 'Helvetica Neue' , Tahoma, Arial, sans-serif;
+/*padding-left:10px;*/
+
+}
+
+.nav-chapter-num
+{
+color: #AAAAAA;
+font-size: 13px;
+font-family: "Proxima Nova Light","Segoe UI",Frutiger,"Frutiger Linotype","Dejavu Sans","Helvetica Neue",Tahoma,Arial,sans-serif;
+
+}
+
+.nav-chapter p.nav-chapter-desc
+{
+/*color: #4D4F51;*/
+margin-bottom: 10px;    
+/*padding-right: 8em;*/
+margin-bottom: 16px;
+font-family: "Proxima Nova Regular","Segoe UI",Frutiger,"Frutiger Linotype","Dejavu Sans","Helvetica Neue",Tahoma,Arial,sans-serif;
+font-size: 14px;
+margin-top: 16px; 
+}
+
+.nav-chapter-title
+{
+font-size: 20px;
+font-family: 'Proxima Nova Regular' , 'Segoe UI' , Frutiger, 'Frutiger Linotype' , 'Dejavu Sans' , 'Helvetica Neue' , Tahoma, Arial, sans-serif;
+margin-bottom: 10px;
+}
+
+.nav-chapter-title a.selected {
+     color: #208EE1;  
+   /* font-family: 'Segoe UI';*/
+font-family: 'Proxima Nova Bold' , 'Segoe UI' , Frutiger, 'Frutiger Linotype' , 'Dejavu Sans' , 'Helvetica Neue' , Tahoma, Arial, sans-serif;
+     text-decoration: none; 
+}
+
+
+.content-chapter-num
+{
+color: #AAAAAA;
+padding-bottom: 0px;
+font-size: 100%;
+font-family: 'Proxima Nova Regular' , 'Segoe UI' , Frutiger, 'Frutiger Linotype' , 'Dejavu Sans' , 'Helvetica Neue' , Tahoma, Arial, sans-serif;
+
+}
+
+.next 
+{
+    
+padding-bottom: 10px;    
+}
+#topic-content-book > * > .topictitle1
+{
+font-family: 'Proxima Nova Regular' , 'Segoe UI' , Frutiger, 'Frutiger Linotype' , 'Dejavu Sans' , 'Helvetica Neue' , Tahoma, Arial, sans-serif;
+margin-top: 0px;
+font-weight: normal;
+
+}
+
+#topic-content-book > .topictitle1
+{
+margin-top: 0px
+}
+
+
+
+
+
+
+.userinput
+{
+    
+font-style: italic;
+font-family: inherit;
+font-size: inherit;
+
+}
+
+h1.glosslinks {
+    font-family: "Proxima Nova Light","Segoe UI",Frutiger,"Frutiger Linotype","Dejavu Sans","Helvetica Neue",Tahoma,Arial,sans-serif;
+    font-size: 160%;
+    font-weight: 400;
+    line-height: 1.2em;
+  
+}
+
+h1.glosslinks a.selected
+{
+    
+ color: #4D4F51;
+
+}
+.glosslinks a
+{
+    
+margin-right: 4px;    
+
+}
+
+
+
+.glosslinks a:visited
+{
+    
+ color: #4EAFF8;
+
+}
+
+span.disable
+{
+color: #A3A6A7;
+margin-right: 4px;   
+    
+}
